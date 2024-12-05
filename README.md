@@ -1,6 +1,6 @@
-# API
+# Margin API
 
-A API foi desenhada para gerir usuários, imagens e apps do Grupo Gimi.
+A Margin API foi desenhada para gerir margem de lucro do Grupo Gimi.
 
 ## ✔️ Tecnologias usadas
 - Python
@@ -22,7 +22,7 @@ A API foi desenhada para gerir usuários, imagens e apps do Grupo Gimi.
 
 ## 📌 Uso
 
-A API segue os princípios REST para comunicação. Os seguintes endpoints estão disponíveis:
+A Margin API segue os princípios REST para comunicação. Os seguintes endpoints estão disponíveis:
 
 ### /users
 - Gerenciar usuários e realizar operações CRUD.

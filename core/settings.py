@@ -31,7 +31,7 @@ SECRET_KEY = str(os.getenv("SECRET_KEY"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = str(os.getenv("DEBUG"))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = str(os.getenv("ALLOWED_HOSTS")).split(" ")
 
 
 # Application definition
@@ -91,7 +91,7 @@ DATABASES = {
     }
 }
 
-# DATABASES["default"] = dj_database_url.parse(str(os.getenv("POSTGRES_URL")))
+DATABASES["default"] = dj_database_url.parse(str(os.getenv("POSTGRES_URL")))
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

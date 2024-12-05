@@ -1,0 +1,248 @@
+[
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Presidencia"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Planejamento Estrategico"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "TI"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Orcamento"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Vendas"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Pos-Vendas"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Gestao de Contratos"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Logistica"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Planejamento Estratégico"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "MKT"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "PeD"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Engenharia de Inovação"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "ADM/FIN"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Gerencia ADM/FIN"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Recursos Humanos"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Finanças"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Contabilidade"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Fiscal"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Financeiro"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Juridico"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Compras"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Engenharia"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Gerencia Engenharia"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Industrial"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Industrial"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Gerência Industrial"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Projeto Elétrico"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Projeto Mecânico"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Estamparia"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Pintura"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Montagem I"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Componentes"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Estruturação"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Montagem II"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Inspeção Final"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Almoxarifado"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "PCPM"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Expedição"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Manutenção"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "SESMT"
+        }
+    },
+    {
+        "model": "users.Department",
+        "fields": {
+            "name": "Qualidade ISO"
+        }
+    }
+]

@@ -1,7 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import CustomUser
+from .models import Card, CustomUser, Department, UserCard
+
+
+class UserCardInline(admin.TabularInline):
+    model = UserCard
+    extra = 1
 
 
 class CustomUserAdmin(BaseUserAdmin):
@@ -13,6 +18,12 @@ class CustomUserAdmin(BaseUserAdmin):
                 "fields": (
                     "id",
                     "name",
+                    "company",
+                    "department",
+                    "type",
+                    "theme",
+                    "color",
+                    "picture",
                 )
             },
         ),
@@ -39,10 +50,31 @@ class CustomUserAdmin(BaseUserAdmin):
             },
         ),
     )
-    list_display = ("id", "email", "name")
-    search_fields = ("email", "name")
+    list_display = ("id", "email", "name", "company", "department")
+    search_fields = ("email", "name", "company")
     ordering = ("email",)
+    inlines = [UserCardInline]
     readonly_fields = ["id", "date_joined"]
 
 
+class CardAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+    )
+    search_fields = ("name",)
+    ordering = ("id",)
+
+
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+    )
+    search_fields = ("name",)
+    ordering = ("id",)
+
+
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Card, CardAdmin)
+admin.site.register(Department, DepartmentAdmin)
