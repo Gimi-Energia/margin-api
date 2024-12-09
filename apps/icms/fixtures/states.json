@@ -1,0 +1,191 @@
+[
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Acre",
+            "code": "AC"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Alagoas",
+            "code": "AL"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Amapá",
+            "code": "AP"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Amazonas",
+            "code": "AM"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Bahia",
+            "code": "BA"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Ceará",
+            "code": "CE"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Distrito Federal",
+            "code": "DF"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Espírito Santo",
+            "code": "ES"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Goiás",
+            "code": "GO"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Maranhão",
+            "code": "MA"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Mato Grosso",
+            "code": "MT"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Mato Grosso do Sul",
+            "code": "MS"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Minas Gerais",
+            "code": "MG"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Pará",
+            "code": "PA"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Paraíba",
+            "code": "PB"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Paraná",
+            "code": "PR"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Pernambuco",
+            "code": "PE"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Piauí",
+            "code": "PI"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Rio de Janeiro",
+            "code": "RJ"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Rio Grande do Norte",
+            "code": "RN"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Rio Grande do Sul",
+            "code": "RS"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Rondônia",
+            "code": "RO"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Roraima",
+            "code": "RR"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Santa Catarina",
+            "code": "SC"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "São Paulo",
+            "code": "SP"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Sergipe",
+            "code": "SE"
+        }
+    },
+    {
+        "model": "icms.state",
+        "fields": {
+            "name": "Tocantins",
+            "code": "TO"
+        }
+    }
+]
