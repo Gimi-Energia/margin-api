@@ -27,13 +27,13 @@ class TaxesService:
 
         return tax
 
-    @staticmethod
-    def create_tax(payload: TaxCreateSchema):
-        if Tax.objects.count() >= TaxesService.MAX_ENTRIES:
+    def create_tax(self, payload: TaxCreateSchema):
+        if Tax.objects.count() >= self.MAX_ENTRIES:
             raise HttpError(
-                HTTPStatus.BAD_REQUEST, "O limite de 10 impostos foi atingido."
+                HTTPStatus.BAD_REQUEST,
+                f"O limite de {self.MAX_ENTRIES} impostos foi atingido.",
             )
-        
+
         return Tax.objects.create(**payload.dict())
 
     def update_tax(self, tax_id: uuid.UUID, payload: TaxUpdateSchema):
