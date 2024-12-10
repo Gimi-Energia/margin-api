@@ -14,7 +14,9 @@ class TaxSchema(TaxCreateSchema):
 
 
 class TaxListSchema(Schema):
-    total: int
+    count: int
+    total_presumed_profit_rate: float
+    total_real_profit_rate: float
     taxes: list[TaxSchema]
 
 

@@ -10,3 +10,14 @@ class Tax(BaseModel):
 
     def __str__(self):
         return str(self.name)
+
+    @classmethod
+    def total_presumed_profit_rate(cls):
+        return (
+            cls.objects.aggregate(total=models.Sum("presumed_profit_rate"))["total"]
+            or 0
+        )
+
+    @classmethod
+    def total_real_profit_rate(cls):
+        return cls.objects.aggregate(total=models.Sum("real_profit_rate"))["total"] or 0

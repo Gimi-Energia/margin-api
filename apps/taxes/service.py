@@ -17,8 +17,14 @@ class TaxesService:
     @staticmethod
     def list_taxes():
         taxes = Tax.objects.all()
-        total = taxes.count()
-        return {total: total, taxes: taxes}
+        count = taxes.count()
+
+        return {
+            "count": count,
+            "total_presumed_profit_rate": Tax.total_presumed_profit_rate(),
+            "total_real_profit_rate": Tax.total_real_profit_rate(),
+            "taxes": taxes,
+        }
 
     def get_tax(self, tax_id: uuid.UUID):
         if not (tax := self.get_tax_by_id(tax_id)):
