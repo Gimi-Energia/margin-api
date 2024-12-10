@@ -14,8 +14,8 @@ class StateService:
     @staticmethod
     def list_states():
         states = State.objects.all()
-        total = states.count()
-        return {"total": total, "states": states}
+        count = states.count()
+        return {"count": count, "states": states}
 
     def get_state(self, state_id: uuid.UUID):
         if not (state := self.get_state_by_id(state_id)):

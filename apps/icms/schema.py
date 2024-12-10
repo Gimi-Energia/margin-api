@@ -10,7 +10,7 @@ class StateSchema(Schema):
 
 
 class StateListSchema(Schema):
-    total: int
+    count: int
     states: list[StateSchema]
 
 
@@ -30,7 +30,7 @@ class NCMSchema(Schema):
 
 
 class NCMSListchema(Schema):
-    total: int
+    count: int
     ncms: list[NCMSchema]
 
 
@@ -48,7 +48,7 @@ class NCMGroupSchema(NCMGroupCreateSchema):
 
 
 class NCMGroupListSchema(Schema):
-    total: int
+    count: int
     ncm_groups: list[NCMGroupSchema]
 
 
@@ -75,9 +75,9 @@ class ICMSRateSchema(Schema):
     internal_rate: float
     difal_rate: float
     poverty_rate: float
-    total_rate: float
+    count_rate: float
 
 
 class ICMSRateListSchema(Schema):
-    total: int
+    count: int
     icms_rates: list[ICMSRateSchema]

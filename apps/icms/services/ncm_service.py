@@ -15,8 +15,8 @@ class NCMService:
     @staticmethod
     def list_ncm_groups():
         ncm_groups = NCMGroup.objects.prefetch_related("ncms").all()
-        total = ncm_groups.count()
-        return {"total": total, "ncm_groups": ncm_groups}
+        count = ncm_groups.count()
+        return {"count": count, "ncm_groups": ncm_groups}
 
     def get_ncm_group(self, group_id: uuid.UUID):
         if not (ncm_group := self.get_ncm_group_by_id(group_id)):
@@ -52,8 +52,8 @@ class NCMService:
     @staticmethod
     def list_ncms():
         ncms = NCM.objects.all()
-        total = ncms.count()
-        return {"total": total, "ncms": ncms}
+        count = ncms.count()
+        return {"count": count, "ncms": ncms}
 
     def get_ncm(self, ncm_id: uuid.UUID):
         if not (ncm := self.get_ncm_by_id(ncm_id)):

@@ -40,8 +40,8 @@ class ICMSService:
     @staticmethod
     def list_icms_rates():
         icms_rates = ICMSRate.objects.select_related("state", "group").all()
-        total = icms_rates.count()
-        return {"total": total, "icms_rates": icms_rates}
+        count = icms_rates.count()
+        return {"count": count, "icms_rates": icms_rates}
 
     def get_icms_rate(self, icms_rate_id: uuid.UUID):
         if not (icms_rate := self.get_icms_rate_by_id(icms_rate_id)):

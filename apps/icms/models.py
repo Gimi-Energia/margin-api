@@ -42,9 +42,9 @@ class ICMSRate(BaseModel):
     difal_rate = models.DecimalField(max_digits=5, decimal_places=2)
     poverty_rate = models.DecimalField(max_digits=5, decimal_places=2)
 
+    def __str__(self):
+        return f"{self.group} - {self.state} - {self.total_rate}%"
+
     @property
     def total_rate(self):
         return self.internal_rate + self.difal_rate + self.poverty_rate
-
-    def __str__(self):
-        return f"{self.group} - {self.state} - {self.total_rate}%"
