@@ -3,9 +3,8 @@ from http import HTTPStatus
 
 from ninja.errors import HttpError
 
+from apps.taxes.models import Tax
 from apps.taxes.schema import TaxCreateSchema, TaxUpdateSchema
-
-from .models import Tax
 
 
 class TaxesService:
