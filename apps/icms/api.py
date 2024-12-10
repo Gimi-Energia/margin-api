@@ -2,7 +2,7 @@ import uuid
 
 from ninja import Router
 
-from .schema import (
+from apps.icms.schema import (
     ICMSRateCreateSchema,
     ICMSRateListSchema,
     ICMSRateSchema,
@@ -17,77 +17,85 @@ from .schema import (
     StateListSchema,
     StateSchema,
 )
-from .service import ICMSService
+from apps.icms.services.icms_service import ICMSService
+from apps.icms.services.ncm_service import NCMService
+from apps.icms.services.state_service import StateService
 
 icms_router = Router()
-service = ICMSService()
+icms_service = ICMSService()
+
+ncm_router = Router()
+ncm_service = NCMService()
+
+state_router = Router()
+state_service = StateService()
 
 
-@icms_router.get("/states", response=StateListSchema)
+@state_router.get("", response=StateListSchema)
 def list_states(request):
-    return service.list_states()
+    return state_service.list_states()
 
 
-@icms_router.get("/states/{state_id}", response=StateSchema)
+@state_router.get("/{state_id}", response=StateSchema)
 def get_state(request, state_id: uuid.UUID):
-    return service.get_state(state_id)
+    return state_service.get_state(state_id)
 
 
-@icms_router.post("/ncm-groups", response=NCMGroupSchema)
+@ncm_router.post("/groups", response=NCMGroupSchema)
 def create_ncm_group(request, payload: NCMGroupCreateSchema):
-    return service.create_ncm_group(payload)
+    return ncm_service.create_ncm_group(payload)
 
 
-@icms_router.get("/ncm-groups", response=NCMGroupListSchema)
+@ncm_router.get("/groups", response=NCMGroupListSchema)
 def list_ncm_groups(request):
-    return service.list_ncm_groups()
+    return ncm_service.list_ncm_groups()
 
 
-@icms_router.get("/ncm-groups/{group_id}", response=NCMGroupSchema)
+@ncm_router.get("/groups/{group_id}", response=NCMGroupSchema)
 def get_ncm_group(request, group_id: uuid.UUID):
-    return service.get_ncm_group(group_id)
+    return ncm_service.get_ncm_group(group_id)
 
 
-@icms_router.patch("/ncm-groups/{group_id}", response=NCMGroupSchema)
+@ncm_router.patch("/groups/{group_id}", response=NCMGroupSchema)
 def update_ncm_group(request, group_id: uuid.UUID, payload: NCMGroupCreateSchema):
-    return service.update_ncm_group(group_id, payload)
+    return ncm_service.update_ncm_group(group_id, payload)
 
 
-@icms_router.post("/ncm", response=NCMSchema)
+@ncm_router.post("", response=NCMSchema)
 def create_ncm(request, payload: NCMSCreateSchema):
-    return service.create_ncm(payload)
+    return ncm_service.create_ncm(payload)
 
 
-@icms_router.get("/ncm", response=NCMSListchema)
+@ncm_router.get("", response=NCMSListchema)
 def list_ncms(request):
-    return service.list_ncms()
+    return ncm_service.list_ncms()
 
 
-@icms_router.get("/ncm/{ncm_id}", response=NCMSchema)
+@ncm_router.get("/{ncm_id}", response=NCMSchema)
 def get_ncm(request, ncm_id: uuid.UUID):
-    return service.get_ncm(ncm_id)
+    return ncm_service.get_ncm(ncm_id)
 
 
-@icms_router.patch("/ncm/{ncm_id}", response=NCMSchema)
+@ncm_router.patch("/{ncm_id}", response=NCMSchema)
 def update_ncm(request, ncm_id: uuid.UUID, payload: NCMSUpdateSchema):
-    return service.update_ncm(ncm_id, payload)
+    return ncm_service.update_ncm(ncm_id, payload)
 
 
 @icms_router.post("/rates", response=ICMSRateSchema)
 def create_icms_rate(request, payload: ICMSRateCreateSchema):
-    return service.create_icms_rate(payload)
+    return icms_service.create_icms_rate(payload)
 
 
 @icms_router.get("/rates", response=ICMSRateListSchema)
 def list_icms_rates(request):
-    return service.list_icms_rates()
+    return icms_service.list_icms_rates()
 
 
 @icms_router.get("/rates/{icms_rate_id}", response=ICMSRateSchema)
 def get_icms_rate(request, icms_rate_id: uuid.UUID):
-    return service.get_icms_rate(icms_rate_id)
+    return icms_service.get_icms_rate(icms_rate_id)
 
 
 @icms_router.patch("/rates/{icms_rate_id}", response=ICMSRateSchema)
 def update_icms_rate(request, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema):
-    return service.update_icms_rate(icms_rate_id, payload)
+    return icms_service.update_icms_rate(icms_rate_id, payload)
