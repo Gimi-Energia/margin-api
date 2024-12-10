@@ -9,6 +9,11 @@ class StateSchema(Schema):
     code: str
 
 
+class StateListSchema(Schema):
+    total: int
+    states: list[StateSchema]
+
+
 class NCMSUpdateSchema(Schema):
     code: str | None = None
     group: uuid.UUID | None = None
@@ -24,6 +29,11 @@ class NCMSchema(Schema):
     code: str
 
 
+class NCMSListchema(Schema):
+    total: int
+    ncms: list[NCMSchema]
+
+
 class NCMGroupCreateSchema(Schema):
     name: str
 
@@ -35,6 +45,11 @@ class NCMGroupRateSchema(NCMGroupCreateSchema):
 class NCMGroupSchema(NCMGroupCreateSchema):
     id: uuid.UUID
     ncms: list[NCMSchema]
+
+
+class NCMGroupListSchema(Schema):
+    total: int
+    ncm_groups: list[NCMGroupSchema]
 
 
 class ICMSRateCreateSchema(Schema):
@@ -61,3 +76,8 @@ class ICMSRateSchema(Schema):
     difal_rate: float
     poverty_rate: float
     total_rate: float
+
+
+class ICMSRateListSchema(Schema):
+    total: int
+    icms_rates: list[ICMSRateSchema]
