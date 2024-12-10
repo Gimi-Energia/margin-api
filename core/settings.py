@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "ninja",
     "corsheaders",
     "apps.icms",
+    "apps.taxes",
 ]
 
 MIDDLEWARE = [

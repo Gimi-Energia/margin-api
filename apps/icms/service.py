@@ -54,7 +54,9 @@ class ICMSService:
         if not (ncm_group := self.get_ncm_group_by_id(group_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
 
-        for attr, value in payload.dict().items():
+        for attr, value in payload.model_dump(
+            exclude_defaults=True, exclude_unset=True
+        ).items():
             setattr(ncm_group, attr, value)
         ncm_group.save()
         return ncm_group
