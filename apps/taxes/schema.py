@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 
 from ninja import Schema
 
@@ -21,6 +22,6 @@ class TaxListSchema(Schema):
 
 
 class TaxUpdateSchema(Schema):
-    name: str | None = None
-    presumed_profit_rate: float | None = None
-    real_profit_rate: float | None = None
+    name: Optional[str] = None
+    presumed_profit_rate: Optional[float] = None
+    real_profit_rate: Optional[float] = None

@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 
 from ninja import Schema
 
@@ -15,8 +16,8 @@ class StateListSchema(Schema):
 
 
 class NCMSUpdateSchema(Schema):
-    code: str | None = None
-    group: uuid.UUID | None = None
+    code: Optional[str] = None
+    group: Optional[uuid.UUID] = None
 
 
 class NCMSCreateSchema(Schema):
@@ -61,11 +62,11 @@ class ICMSRateCreateSchema(Schema):
 
 
 class ICMSRateUpdateSchema(Schema):
-    state: uuid.UUID | None = None
-    group: uuid.UUID | None = None
-    internal_rate: float | None = None
-    difal_rate: float | None = None
-    poverty_rate: float | None = None
+    state: Optional[uuid.UUID] = None
+    group: Optional[uuid.UUID] = None
+    internal_rate: Optional[float] = None
+    difal_rate: Optional[float] = None
+    poverty_rate: Optional[float] = None
 
 
 class ICMSRateSchema(Schema):

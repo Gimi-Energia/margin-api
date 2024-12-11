@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 
 from ninja import Schema
 
@@ -18,8 +19,8 @@ class CompanyListSchema(Schema):
 
 
 class CompanyUpdateSchema(Schema):
-    name: str | None = None
-    profit_type: str | None = None
+    name: Optional[str] = None
+    profit_type: Optional[str] = None
 
 
 class PercentageSchema(Schema):
@@ -33,4 +34,4 @@ class PercentageListSchema(Schema):
 
 
 class PercentageUpdateSchema(Schema):
-    value: float | None = None
+    value: Optional[float] = None
