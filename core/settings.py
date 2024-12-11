@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "apps.icms",
     "apps.taxes",
+    "apps.margin",
 ]
 
 MIDDLEWARE = [

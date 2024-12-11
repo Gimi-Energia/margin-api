@@ -1,0 +1,23 @@
+[
+    {
+        "model": "margin.company",
+        "fields": {
+            "name": "GIMI",
+            "profit_type": "real"
+        }
+    },
+    {
+        "model": "margin.company",
+        "fields": {
+            "name": "GBL",
+            "profit_type": "real"
+        }
+    },
+    {
+        "model": "margin.company",
+        "fields": {
+            "name": "GPB",
+            "profit_type": "presumed"
+        }
+    }
+]
