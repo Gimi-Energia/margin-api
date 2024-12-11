@@ -1,5 +1,6 @@
 import uuid
 from http import HTTPStatus
+from django.http import JsonResponse
 
 from ninja.errors import HttpError
 
@@ -39,6 +40,15 @@ class NCMService:
         ncm_group.save()
         return ncm_group
 
+    def delete_ncm_group(self, ncm_group_id: uuid.UUID):
+        if not (ncm_group := self.get_ncm_group_by_id(ncm_group_id)):
+            raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
+
+        ncm_group.delete()
+        return JsonResponse(
+            {"detail": "Grupo de NCM deletado com sucesso"}, status=HTTPStatus.OK
+        )
+
     def create_ncm(self, payload: NCMSCreateSchema):
         if not (ncm_group := self.get_ncm_group_by_id(payload.group)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
@@ -76,3 +86,12 @@ class NCMService:
 
         ncm.save()
         return ncm
+
+    def delete_ncm(self, ncm_id: uuid.UUID):
+        if not (ncm := self.get_ncm_by_id(ncm_id)):
+            raise HttpError(HTTPStatus.NOT_FOUND, "NCM não encontrado")
+
+        ncm.delete()
+        return JsonResponse(
+            {"detail": "NCM deletado com sucesso"}, status=HTTPStatus.OK
+        )

@@ -61,6 +61,11 @@ def update_ncm_group(request, group_id: uuid.UUID, payload: NCMGroupCreateSchema
     return ncm_service.update_ncm_group(group_id, payload)
 
 
+@ncm_router.delete("/groups/{group_id}")
+def delete_ncm_group(request, group_id: uuid.UUID):
+    return ncm_service.delete_ncm_group(group_id)
+
+
 @ncm_router.post("", response=NCMSchema)
 def create_ncm(request, payload: NCMSCreateSchema):
     return ncm_service.create_ncm(payload)
@@ -81,6 +86,11 @@ def update_ncm(request, ncm_id: uuid.UUID, payload: NCMSUpdateSchema):
     return ncm_service.update_ncm(ncm_id, payload)
 
 
+@ncm_router.delete("/{ncm_id}")
+def delete_ncm(request, ncm_id: uuid.UUID):
+    return ncm_service.delete_ncm(ncm_id)
+
+
 @icms_router.post("/rates", response=ICMSRateSchema)
 def create_icms_rate(request, payload: ICMSRateCreateSchema):
     return icms_service.create_icms_rate(payload)
@@ -99,3 +109,8 @@ def get_icms_rate(request, icms_rate_id: uuid.UUID):
 @icms_router.patch("/rates/{icms_rate_id}", response=ICMSRateSchema)
 def update_icms_rate(request, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema):
     return icms_service.update_icms_rate(icms_rate_id, payload)
+
+
+@icms_router.delete("/rates/{icms_rate_id}")
+def delete_icms_rate(request, icms_rate_id: uuid.UUID):
+    return icms_service.delete_icms_rate(icms_rate_id)

@@ -1,6 +1,7 @@
 import uuid
 from http import HTTPStatus
 
+from django.http import JsonResponse
 from ninja.errors import HttpError
 
 from apps.taxes.models import Tax
@@ -52,3 +53,12 @@ class TaxesService:
 
         tax.save()
         return tax
+
+    def delete_tax(self, tax_id: uuid.UUID):
+        if not (tax := self.get_tax_by_id(tax_id)):
+            raise HttpError(HTTPStatus.NOT_FOUND, "Imposto não encontrado")
+
+        tax.delete()
+        return JsonResponse(
+            {"detail": "Imposto deletado com sucesso"}, status=HTTPStatus.OK
+        )

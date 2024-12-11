@@ -1,6 +1,7 @@
 import uuid
 from http import HTTPStatus
 
+from django.http import JsonResponse
 from ninja.errors import HttpError
 
 from apps.icms.models import ICMSRate
@@ -77,3 +78,12 @@ class ICMSService:
         icms_rate.save()
 
         return icms_rate
+
+    def delete_icms_rate(self, icms_rate_id: uuid.UUID):
+        if not (icms_rate := self.get_icms_rate_by_id(icms_rate_id)):
+            raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
+
+        icms_rate.delete()
+        return JsonResponse(
+            {"detail": "Taxa de ICMS deletada com sucesso"}, status=HTTPStatus.OK
+        )
