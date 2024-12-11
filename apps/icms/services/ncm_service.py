@@ -60,6 +60,10 @@ class NCMService:
         return NCM.objects.filter(pk=ncm_id).first()
 
     @staticmethod
+    def get_ncm_by_code(ncm_code: str):
+        return NCM.objects.filter(code=ncm_code).first()
+
+    @staticmethod
     def list_ncms():
         ncms = NCM.objects.all()
         count = ncms.count()
