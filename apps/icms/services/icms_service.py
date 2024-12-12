@@ -38,8 +38,8 @@ class ICMSService:
     def get_icms_rate_by_id(icms_rate_id: uuid.UUID):
         return ICMSRate.objects.filter(pk=icms_rate_id).first()
 
-    def get_rate_by_state_and_ncm(self, state_id: uuid.UUID, ncm_code: str):
-        if not (state := self.state_service.get_state_by_id(state_id)):
+    def get_rate_by_state_and_ncm(self, state_code: str, ncm_code: str):
+        if not (state := self.state_service.get_state_by_code(state_code)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Estado não encontrado")
 
         if not (ncm := self.ncm_service.get_ncm_by_code(ncm_code)):

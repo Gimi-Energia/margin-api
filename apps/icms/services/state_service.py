@@ -12,6 +12,10 @@ class StateService:
         return State.objects.filter(pk=state_id).first()
 
     @staticmethod
+    def get_state_by_code(state_code: str):
+        return State.objects.filter(code=state_code).first()
+
+    @staticmethod
     def list_states():
         states = State.objects.all()
         count = states.count()

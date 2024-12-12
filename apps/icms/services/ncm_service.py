@@ -14,6 +14,16 @@ class NCMService:
         return NCMGroup.objects.filter(pk=ncm_group_id).first()
 
     @staticmethod
+    def get_ncm_group_by_ncm_code(ncm_code: str):
+        if not (
+            ncm := NCM.objects.filter(code=ncm_code).select_related("group").first()
+        ):
+            raise HttpError(
+                HTTPStatus.NOT_FOUND, "NCM com o código especificado não encontrado"
+            )
+        return ncm.group
+
+    @staticmethod
     def list_ncm_groups():
         ncm_groups = NCMGroup.objects.prefetch_related("ncms").all()
         count = ncm_groups.count()
