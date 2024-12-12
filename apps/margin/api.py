@@ -7,18 +7,23 @@ from apps.margin.schema import (
     CompanyListSchema,
     CompanySchema,
     CompanyUpdateSchema,
+    ContractSchema,
     PercentageListSchema,
     PercentageSchema,
     PercentageUpdateSchema,
 )
 from apps.margin.services.company_service import CompanyService
-from apps.margin.services.percentages_service import PercentageService
+from apps.margin.services.contract_service import ContractService
+from apps.margin.services.percentage_service import PercentageService
 
 company_router = Router()
 company_service = CompanyService()
 
 percentage_router = Router()
 percentage_service = PercentageService()
+
+contract_router = Router()
+contract_service = ContractService()
 
 
 @company_router.post("", response=CompanySchema)
@@ -61,3 +66,8 @@ def update_percentage(
     request, percentage_id: uuid.UUID, payload: PercentageUpdateSchema
 ):
     return percentage_service.update_percentage(percentage_id, payload)
+
+
+@contract_router.get("", response=ContractSchema)
+def find_iapp_contract(request, company_id: uuid.UUID, contract: str):
+    return contract_service.find_iapp_contract(company_id, contract)

@@ -35,3 +35,22 @@ class PercentageListSchema(Schema):
 
 class PercentageUpdateSchema(Schema):
     value: Optional[float] = None
+
+
+class ProductSchema(Schema):
+    index: int
+    name: str
+    ncm: str
+    current_value: float
+    contribution_percentage: float
+
+
+class ContractSchema(Schema):
+    client_name: str
+    construction_name: str
+    current_sale_value: float
+    cost_value: float
+    freight_value: float
+    commission: float
+    state: str
+    items: list[ProductSchema]
