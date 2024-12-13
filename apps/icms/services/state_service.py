@@ -11,6 +11,9 @@ class StateService:
     def get_state_by_id(state_id: uuid.UUID):
         return State.objects.filter(pk=state_id).first()
 
+    def get_states_by_ids(self, state_ids: list[uuid.UUID]):
+        return State.objects.filter(id__in=state_ids)
+
     @staticmethod
     def get_state_by_code(state_code: str):
         return State.objects.filter(code=state_code).first()

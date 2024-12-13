@@ -5,7 +5,11 @@ from django.http import JsonResponse
 from ninja.errors import HttpError
 
 from apps.icms.models import ICMSRate
-from apps.icms.schema import ICMSRateCreateSchema, ICMSRateUpdateSchema
+from apps.icms.schema import (
+    ICMSRateBulkCreateSchema,
+    ICMSRateCreateSchema,
+    ICMSRateUpdateSchema,
+)
 from apps.icms.services.ncm_service import NCMService
 from apps.icms.services.state_service import StateService
 
@@ -32,6 +36,72 @@ class ICMSService:
             internal_rate=payload.internal_rate,
             difal_rate=payload.difal_rate,
             poverty_rate=payload.poverty_rate,
+        )
+
+    def bulk_create_icms_rates(self, payload: ICMSRateBulkCreateSchema):
+        if not (rates := payload.rates):
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
+
+        group_id = rates[0].group
+        if not (ncm_group := self.ncm_service.get_ncm_group_by_id(group_id)):
+            raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado.")
+
+        for rate in rates:
+            if rate.group != group_id:
+                raise HttpError(
+                    HTTPStatus.BAD_REQUEST,
+                    "Todos os registros devem usar o mesmo grupo de NCM.",
+                )
+            if (
+                rate.internal_rate <= 0
+                or rate.difal_rate <= 0
+                or rate.poverty_rate <= 0
+            ):
+                raise HttpError(
+                    HTTPStatus.BAD_REQUEST,
+                    "As taxas não podem ser 0 ou nulas.",
+                )
+
+        all_states_data = self.state_service.list_states()
+        all_states = all_states_data["states"]
+        all_state_codes = {state.code for state in all_states}
+
+        rates_state_codes = {
+            next(
+                (state.code for state in all_states if state.id == item.state),
+                None,
+            )
+            for item in rates
+        }
+
+        if missing_states := all_state_codes - rates_state_codes:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST,
+                f"Os seguintes estados não foram enviados: {', '.join(missing_states)}",
+            )
+
+        rates_to_create = []
+        for rate in rates:
+            if not (state := next((s for s in all_states if s.id == rate.state), None)):
+                raise HttpError(
+                    HTTPStatus.NOT_FOUND,
+                    f"Estado com ID {rate.state} não encontrado.",
+                )
+            rates_to_create.append(
+                ICMSRate(
+                    state=state,
+                    group=ncm_group,
+                    internal_rate=rate.internal_rate,
+                    difal_rate=rate.difal_rate,
+                    poverty_rate=rate.poverty_rate,
+                )
+            )
+
+        ICMSRate.objects.bulk_create(rates_to_create)
+
+        return JsonResponse(
+            {"detail": f"{len(rates_to_create)} registros criados com sucesso"},
+            status=HTTPStatus.OK,
         )
 
     @staticmethod

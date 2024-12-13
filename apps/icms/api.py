@@ -3,6 +3,7 @@ import uuid
 from ninja import Router
 
 from apps.icms.schema import (
+    ICMSRateBulkCreateSchema,
     ICMSRateCreateSchema,
     ICMSRateListSchema,
     ICMSRateSchema,
@@ -99,6 +100,11 @@ def create_icms_rate(request, payload: ICMSRateCreateSchema):
 @icms_router.get("/rates", response=ICMSRateListSchema)
 def list_icms_rates(request):
     return icms_service.list_icms_rates()
+
+
+@icms_router.post("/rates/bulk-create")
+def bulk_create_icms_rates(request, payload: ICMSRateBulkCreateSchema):
+    return icms_service.bulk_create_icms_rates(payload)
 
 
 @icms_router.get("/rates/{icms_rate_id}", response=ICMSRateSchema)

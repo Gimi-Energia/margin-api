@@ -61,6 +61,10 @@ class ICMSRateCreateSchema(Schema):
     poverty_rate: float
 
 
+class ICMSRateBulkCreateSchema(Schema):
+    rates: list[ICMSRateCreateSchema]
+
+
 class ICMSRateUpdateSchema(Schema):
     state: Optional[uuid.UUID] = None
     group: Optional[uuid.UUID] = None
@@ -76,7 +80,7 @@ class ICMSRateSchema(Schema):
     internal_rate: float
     difal_rate: float
     poverty_rate: float
-    count_rate: float
+    total_rate: float
 
 
 class ICMSRateListSchema(Schema):
