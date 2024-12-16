@@ -30,7 +30,7 @@ class ContractService:
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Credenciais não configuradas.")
 
         ENDPOINT = (
-            "https://api.iniciativaaplicativos.com.br/api/engenharia/produtos/lista"
+            "https://api.iniciativaaplicativos.com.br/api/comercial/contratos/lista"
         )
         headers = {"TOKEN": token, "SECRET": secret}
 
@@ -77,7 +77,11 @@ class ContractService:
                     raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
 
                 contract_data = {
+                    "contract_id": item.get("id", "N/A"),
+                    "contract_number": item.get("identificacao", "N/A"),
+                    "company": item.get("codigo_empresa", "N/A"),
                     "client_name": item.get("cliente", {}).get("nome", "N/A"),
+                    "client_id": item.get("cliente").get("id", "N/A"),
                     "construction_name": item.get("projeto", {}).get("nome", "N/A"),
                     "current_sale_value": item.get("valores", {}).get("valor_total", 0),
                     "cost_value": item.get("valores", {}).get("valor_produtos", 0),
@@ -86,7 +90,11 @@ class ContractService:
                         item.get("vendedor", {})
                         .get("nome", "Gimi_0%")
                         .split("_")[1][:-1]
+                        .replace(",", ".")
                     ),
+                    "account": item.get("conta_corrente", "N/A"),
+                    "installments": item.get("parcelamento", "N/A"),
+                    "xped": item.get("xped", "N/A"),
                     "state": state,
                     "icms": icms.total_rate,
                     "other_taxes": other_taxes,

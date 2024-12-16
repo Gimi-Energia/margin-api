@@ -46,11 +46,21 @@ class ProductSchema(Schema):
 
 
 class ContractSchema(Schema):
+    # id: uuid.UUID
+    contract_id: int
+    contract_number: str
+    company: int
     client_name: str
+    client_id: int
     construction_name: str
     current_sale_value: float
     cost_value: float
     freight_value: float
     commission: float
     state: str
+    icms: float
+    other_taxes: float
+    account: int
+    installments: int
+    xped: str | None = None
     items: list[ProductSchema]
