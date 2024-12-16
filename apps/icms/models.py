@@ -24,7 +24,7 @@ class NCMGroup(BaseModel):
 
 
 class NCM(BaseModel):
-    code = models.CharField(max_length=8, unique=True)
+    code = models.CharField(max_length=10, unique=True)
     group = models.ForeignKey(NCMGroup, on_delete=models.CASCADE, related_name="ncms")
 
     def __str__(self):
@@ -48,3 +48,10 @@ class ICMSRate(BaseModel):
     @property
     def total_rate(self):
         return self.internal_rate + self.difal_rate + self.poverty_rate
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["state", "group"], name="unique_state_group_icmsrate"
+            )
+        ]
