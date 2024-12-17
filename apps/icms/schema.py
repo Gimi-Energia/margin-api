@@ -86,3 +86,16 @@ class ICMSRateSchema(Schema):
 class ICMSRateListSchema(Schema):
     count: int
     icms_rates: list[ICMSRateSchema]
+
+
+class ICMSRateContractSchema(Schema):
+    total_rate: float
+
+
+class StateContractSchema(Schema):
+    name: str
+    code: str
+
+
+class NCMContractSchema(Schema):
+    code: str
