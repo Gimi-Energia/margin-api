@@ -7,7 +7,7 @@ from apps.margin.schema import (
     CompanyListSchema,
     CompanySchema,
     CompanyUpdateSchema,
-    ContractSchema,
+    ContractFindSchema,
     PercentageListSchema,
     PercentageSchema,
     PercentageUpdateSchema,
@@ -68,6 +68,16 @@ def update_percentage(
     return percentage_service.update_percentage(percentage_id, payload)
 
 
-@contract_router.get("", response=ContractSchema)
+@contract_router.get("/find", response=ContractFindSchema)
 def find_iapp_contract(request, company_id: uuid.UUID, contract: str):
     return contract_service.find_iapp_contract(company_id, contract)
+
+
+@contract_router.get("/calculate", response=str)
+def calculate_iapp_contract(request, contract_id: uuid.UUID, percentage_id: uuid.UUID):
+    return f"{contract_id} - {percentage_id}"
+
+
+@contract_router.get("/return", response=str)
+def return_iapp_contract(request, contract_id: uuid.UUID):
+    return str(contract_id)

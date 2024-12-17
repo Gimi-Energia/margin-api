@@ -50,36 +50,32 @@ class PercentageContractSchema(Schema):
     value: float
 
 
-class ProductSchema(Schema):
-    # id: uuid.UUID
+class ProductFindSchema(Schema):
     index: int
     name: str
     contribution_rate: float
-    # sale_item_id: int
-    # quantity: int
-    # product_id: int
-    # updated_value: float
 
 
-class ContractSchema(Schema):
-    # id: uuid.UUID
-    # contract_id: int
+class ProductCalculateSchema(ProductFindSchema):
+    updated_value: float
+
+
+class ContractFindSchema(Schema):
     contract_number: str
     company: CompanyContractSchema
     client_name: str
-    # client_id: int
     construction_name: str
     net_cost: float
     net_cost_without_taxes: float
-    # net_cost_with_margin: float
     freight_value: float
     commission: float
     state: StateContractSchema
     ncm: NCMContractSchema
     icms: ICMSRateContractSchema
     other_taxes: float
-    # account: int
-    # installments: int
-    # xped: str
-    # margin: PercentageContractSchema
-    items: list[ProductSchema]
+    items: list[ProductFindSchema]
+
+
+class ContractCalculateSchema(ContractFindSchema):
+    net_cost_with_margin: float
+    margin: PercentageContractSchema
