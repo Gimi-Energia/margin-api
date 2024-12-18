@@ -21,74 +21,87 @@ from apps.icms.schema import (
 from apps.icms.services.icms_service import ICMSService
 from apps.icms.services.ncm_service import NCMService
 from apps.icms.services.state_service import StateService
+from utils.jwt import JWTAuth, decode_jwt_token
 
-icms_router = Router()
+icms_router = Router(auth=JWTAuth())
 icms_service = ICMSService()
 
-ncm_router = Router()
+ncm_router = Router(auth=JWTAuth())
 ncm_service = NCMService()
 
-state_router = Router()
+state_router = Router(auth=JWTAuth())
 state_service = StateService()
 
 
 @state_router.get("", response=StateListSchema)
 def list_states(request):
+    decode_jwt_token(request.headers.get("Authorization"))
     return state_service.list_states()
 
 
 @state_router.get("/{state_id}", response=StateSchema)
 def get_state(request, state_id: uuid.UUID):
+    decode_jwt_token(request.headers.get("Authorization"))
     return state_service.get_state(state_id)
 
 
 @ncm_router.post("/groups", response=NCMGroupSchema)
 def create_ncm_group(request, payload: NCMGroupCreateSchema):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.create_ncm_group(payload)
 
 
 @ncm_router.get("/groups", response=NCMGroupListSchema)
 def list_ncm_groups(request):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.list_ncm_groups()
 
 
 @ncm_router.get("/groups/{group_id}", response=NCMGroupSchema)
 def get_ncm_group(request, group_id: uuid.UUID):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.get_ncm_group(group_id)
 
 
 @ncm_router.patch("/groups/{group_id}", response=NCMGroupSchema)
 def update_ncm_group(request, group_id: uuid.UUID, payload: NCMGroupCreateSchema):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.update_ncm_group(group_id, payload)
 
 
 @ncm_router.delete("/groups/{group_id}")
 def delete_ncm_group(request, group_id: uuid.UUID):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.delete_ncm_group(group_id)
 
 
 @ncm_router.post("", response=NCMSchema)
 def create_ncm(request, payload: NCMSCreateSchema):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.create_ncm(payload)
 
 
 @ncm_router.get("", response=NCMSListchema)
 def list_ncms(request):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.list_ncms()
 
 
 @ncm_router.get("/{ncm_id}", response=NCMSchema)
 def get_ncm(request, ncm_id: uuid.UUID):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.get_ncm(ncm_id)
 
 
 @ncm_router.patch("/{ncm_id}", response=NCMSchema)
 def update_ncm(request, ncm_id: uuid.UUID, payload: NCMSUpdateSchema):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.update_ncm(ncm_id, payload)
 
 
 @ncm_router.delete("/{ncm_id}")
 def delete_ncm(request, ncm_id: uuid.UUID):
+    decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.delete_ncm(ncm_id)
 
 
