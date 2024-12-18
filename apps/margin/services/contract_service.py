@@ -1,14 +1,18 @@
 import os
 import uuid
+from datetime import datetime
 from http import HTTPStatus
 
 import requests
+from django.db import transaction
 from ninja.errors import HttpError
 
 from apps.icms.services.icms_service import ICMSService
 from apps.icms.services.ncm_service import NCMService
 from apps.icms.services.state_service import StateService
+from apps.margin.models import Contract, ContractItem
 from apps.margin.services.company_service import CompanyService
+from apps.margin.services.percentage_service import PercentageService
 from apps.taxes.models import Tax
 
 
@@ -29,6 +33,80 @@ class ContractService:
     def icms_service(self):
         return ICMSService()
 
+    @property
+    def percentage_service(self):
+        return PercentageService()
+
+    @staticmethod
+    def get_contract_by_id(contract_id: uuid.UUID):
+        return Contract.objects.filter(pk=contract_id).first()
+
+    def calculate_iapp_contract(self, contract_id: uuid.UUID, percentage_id: uuid.UUID):
+        if not (contract := self.get_contract_by_id(contract_id)):
+            raise HttpError(HTTPStatus.NOT_FOUND, "Contrato não encontrada")
+
+        if not (
+            percentage := self.percentage_service.get_percentage_by_id(percentage_id)
+        ):
+            raise HttpError(HTTPStatus.NOT_FOUND, "Porcentagem não encontrada")
+
+        margin = percentage.value
+
+        sale_price = (
+            float(contract.net_cost_without_taxes) + float(contract.freight_value)
+        ) / (
+            1
+            - (float(contract.icms.total_rate) / 100)
+            - (float(contract.other_taxes) / 100)
+            - (float(margin) / 100)
+            - (float(contract.commission) / 100)
+        )
+
+        sale_price = round(sale_price)
+
+        with transaction.atomic():
+            contract.net_cost_with_margin = sale_price
+            contract.margin = percentage
+            contract.save()
+
+            items = contract.items.all()
+            for item in items:
+                item.updated_value = (sale_price * item.contribution_rate) / 100
+                item.save()
+
+        return self._prepare_calculated_response(contract)
+
+    def _prepare_calculated_response(self, contract: Contract):
+        items_data = [
+            {
+                "id": item.id,
+                "index": item.index,
+                "name": item.name,
+                "contribution_rate": item.contribution_rate,
+                "updated_value": item.updated_value,
+            }
+            for item in contract.items.all()
+        ]
+
+        return {
+            "id": contract.id,
+            "contract_number": contract.contract_number,
+            "company": contract.company,
+            "client_name": contract.client_name,
+            "construction_name": contract.construction_name,
+            "net_cost": contract.net_cost,
+            "net_cost_without_taxes": contract.net_cost_without_taxes,
+            "freight_value": contract.freight_value,
+            "commission": contract.commission,
+            "state": contract.state,
+            "ncm": contract.ncm,
+            "icms": contract.icms,
+            "other_taxes": contract.other_taxes,
+            "items": items_data,
+            "net_cost_with_margin": contract.net_cost_with_margin,
+            "margin": contract.margin,
+        }
+
     def find_iapp_contract(self, company_id: uuid.UUID, contract: str):
         if not (company := self.company_service.get_company_by_id(company_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Empresa não encontrada")
@@ -38,21 +116,23 @@ class ContractService:
 
         item = items[0]
         products = self.validate_field(item.get("produtos"), "produtos")
-        ncm_obj = self._validate_ncm(products)
+        ncm_instance = self._validate_ncm(products)
 
         other_taxes = self._calculate_other_taxes(company.profit_type)
 
         state = self.validate_field(item.get("cliente").get("estado"), "cliente.estado")
-        if not (state_obj := self.state_service.get_state_by_code(state)):
+        if not (state_instance := self.state_service.get_state_by_code(state)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Estado não encontrado")
 
         if not (
-            icms_obj := self.icms_service.get_rate_by_state_and_ncm(state, ncm_obj.code)
+            icms_instance := self.icms_service.get_rate_by_state_and_ncm(
+                state, ncm_instance.code
+            )
         ):
             raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
 
         net_cost, net_cost_without_taxes = self._calculate_net_costs(
-            item, icms_obj.total_rate, other_taxes
+            item, icms_instance.total_rate, other_taxes
         )
 
         contract_data = {
@@ -70,9 +150,12 @@ class ContractService:
             "construction_name": self.validate_field(
                 item.get("projeto").get("nome"), "projeto.nome"
             ),
-            "delivery_date": self.validate_field(
-                item.get("datas").get("previsao_entrega"), "datas.previsao_entrega"
-            ),
+            "delivery_date": datetime.strptime(
+                self.validate_field(
+                    item.get("datas").get("previsao_entrega"), "datas.previsao_entrega"
+                ),
+                "%Y-%m-%d",
+            ).date(),
             "net_cost": net_cost,
             "net_cost_without_taxes": net_cost_without_taxes,
             "net_cost_with_margin": None,
@@ -83,9 +166,9 @@ class ContractService:
                 .split("_")[1][:-1]
                 .replace(",", ".")
             ),
-            "state": state_obj,
-            "ncm": ncm_obj,
-            "icms": icms_obj,
+            "state": state_instance,
+            "ncm": ncm_instance,
+            "icms": icms_instance,
             "other_taxes": other_taxes,
             "account": self.validate_field(
                 item.get("conta_corrente"), "conta_corrente"
@@ -122,7 +205,9 @@ class ContractService:
                 for index, product in enumerate(products, start=1)
             ],
         }
-        return contract_data
+
+        contract_data_with_ids = self._save_contract(contract_data)
+        return contract_data_with_ids
 
     def _get_credentials(self, company):
         token = str(os.getenv(f"TOKEN_{company.name}"))
@@ -166,10 +251,10 @@ class ContractService:
             )
 
         ncm = next(iter(ncm_values))
-        if not (ncm_obj := self.ncm_service.get_ncm_by_code(ncm)):
+        if not (ncm_instance := self.ncm_service.get_ncm_by_code(ncm)):
             raise HttpError(HTTPStatus.NOT_FOUND, "NCM não encontrado")
 
-        return ncm_obj
+        return ncm_instance
 
     def _calculate_other_taxes(self, company_type):
         return (
@@ -187,6 +272,52 @@ class ContractService:
         total_taxes = 1 + (icms_rate + other_taxes_rate)
         net_cost_without_taxes = net_cost / total_taxes
         return net_cost, net_cost_without_taxes
+
+    def _save_contract(self, contract_data):
+        try:
+            with transaction.atomic():
+                contract = Contract.objects.create(
+                    contract_id=contract_data["contract_id"],
+                    contract_number=contract_data["contract_number"],
+                    company=contract_data["company"],
+                    client_name=contract_data["client_name"],
+                    client_id=contract_data["client_id"],
+                    construction_name=contract_data["construction_name"],
+                    delivery_date=contract_data["delivery_date"],
+                    net_cost=contract_data["net_cost"],
+                    net_cost_without_taxes=contract_data["net_cost_without_taxes"],
+                    net_cost_with_margin=contract_data["net_cost_with_margin"],
+                    freight_value=contract_data["freight_value"],
+                    commission=contract_data["commission"],
+                    state=contract_data["state"],
+                    ncm=contract_data["ncm"],
+                    icms=contract_data["icms"],
+                    other_taxes=contract_data["other_taxes"],
+                    account=contract_data["account"],
+                    installments=contract_data["installments"],
+                    xped=contract_data["xped"],
+                    margin=contract_data["margin"],
+                )
+                contract_data["id"] = contract.id
+
+                for index, item in enumerate(contract_data["items"]):
+                    item_instance = ContractItem.objects.create(
+                        contract=contract,
+                        index=item["index"],
+                        name=item["name"],
+                        contribution_rate=item["contribution_rate"],
+                        sale_item_id=item["sale_item_id"],
+                        quantity=item["quantity"],
+                        product_id=item["product_id"],
+                        updated_value=item["updated_value"],
+                    )
+                    contract_data["items"][index]["id"] = item_instance.id
+
+            return contract_data
+        except Exception as e:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, f"Erro ao salvar contrato: {e}."
+            ) from e
 
     def raise_error(self, field):
         raise HttpError(
