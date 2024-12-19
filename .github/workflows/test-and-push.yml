@@ -47,7 +47,7 @@ jobs:
       - name: Run tests
         env:
           DJANGO_SETTINGS_MODULE: core.settings
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+          POSTGRES_URL: postgres://postgres:postgres@localhost:5432/test_db
         run: |
           source .venv/bin/activate
           python manage.py migrate
