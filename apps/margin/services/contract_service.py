@@ -5,7 +5,6 @@ from http import HTTPStatus
 
 import requests
 from django.db import transaction
-from django.http import JsonResponse
 from ninja.errors import HttpError
 
 from apps.icms.services.icms_service import ICMSService
@@ -13,6 +12,7 @@ from apps.icms.services.ncm_service import NCMService
 from apps.icms.services.state_service import StateService
 from apps.margin.models import Contract, ContractItem
 from apps.margin.services.company_service import CompanyService
+from apps.margin.services.email_service import EmailService
 from apps.margin.services.percentage_service import PercentageService
 from apps.taxes.models import Tax
 
@@ -38,6 +38,10 @@ class ContractService:
     def percentage_service(self):
         return PercentageService()
 
+    @property
+    def email_service(self):
+        return EmailService()
+
     @staticmethod
     def get_contract_by_id(contract_id: uuid.UUID):
         return Contract.objects.filter(pk=contract_id).first()
@@ -49,6 +53,8 @@ class ContractService:
         token, secret = self._get_credentials(contract.company)
         payload = self._prepare_update_payload(contract)
         self._update_contract_data(contract.contract_id, payload, token, secret)
+
+        self.email_service.send_margin_email(contract)
 
         return {
             "detail": f"Retorno do contrato {contract.contract_number} realizado com sucesso.",
