@@ -95,3 +95,8 @@ class ContractCalculateSchema(Schema):
     other_taxes: float
     margin: PercentageContractSchema
     items: list[ProductCalculateSchema]
+
+
+class ContractReturnSchema(Schema):
+    detail: str
+    url: str

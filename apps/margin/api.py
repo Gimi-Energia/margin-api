@@ -9,6 +9,7 @@ from apps.margin.schema import (
     CompanyUpdateSchema,
     ContractCalculateSchema,
     ContractFindSchema,
+    ContractReturnSchema,
     PercentageListSchema,
     PercentageSchema,
     PercentageUpdateSchema,
@@ -90,7 +91,7 @@ def calculate_iapp_contract(request, contract_id: uuid.UUID, percentage_id: uuid
     return contract_service.calculate_iapp_contract(contract_id, percentage_id)
 
 
-@contract_router.get("/return", response=str)
+@contract_router.get("/return", response=ContractReturnSchema)
 def return_iapp_contract(request, contract_id: uuid.UUID):
     decode_jwt_token(request.headers.get("Authorization"))
-    return str(contract_id)
+    return contract_service.return_iapp_contract(contract_id)
