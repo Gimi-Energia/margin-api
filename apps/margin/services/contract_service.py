@@ -18,29 +18,13 @@ from apps.taxes.models import Tax
 
 
 class ContractService:
-    @property
-    def ncm_service(self):
-        return NCMService()
-
-    @property
-    def state_service(self):
-        return StateService()
-
-    @property
-    def company_service(self):
-        return CompanyService()
-
-    @property
-    def icms_service(self):
-        return ICMSService()
-
-    @property
-    def percentage_service(self):
-        return PercentageService()
-
-    @property
-    def email_service(self):
-        return EmailService()
+    def __init__(self):
+        self.ncm_service = NCMService()
+        self.state_service = StateService()
+        self.company_service = CompanyService()
+        self.icms_service = ICMSService()
+        self.percentage_service = PercentageService()
+        self.email_service = EmailService()
 
     @staticmethod
     def get_contract_by_id(contract_id: uuid.UUID):
@@ -124,7 +108,7 @@ class ContractService:
             - (float(contract.commission) / 100)
         )
 
-        sale_price = round(sale_price)
+        sale_price = round(sale_price + 0.5)
 
         with transaction.atomic():
             contract.net_cost_with_margin = sale_price
@@ -326,8 +310,12 @@ class ContractService:
         )
 
     def _calculate_net_costs(self, item, icms_rate, other_taxes):
-        net_cost = self.validate_field(
-            item.get("valores").get("valor_produtos"), "valor_produtos"
+        products = item.get("produtos")
+        net_cost = sum(
+            self.validate_field(
+                product.get("valores").get("unitario"), "valores.unitario"
+            )
+            for product in products
         )
         icms_rate = float(icms_rate) / 100
         other_taxes_rate = float(other_taxes) / 100
