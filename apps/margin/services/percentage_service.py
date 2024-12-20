@@ -5,9 +5,13 @@ from ninja.errors import HttpError
 
 from apps.margin.models import Percentage
 from apps.margin.schema import PercentageUpdateSchema
+from utils.validation import ValidationService
 
 
 class PercentageService:
+    def __init__(self):
+        self.validation_service = ValidationService()
+
     @staticmethod
     def get_percentage_by_id(percentage_id: uuid.UUID):
         return Percentage.objects.filter(pk=percentage_id).first()
@@ -29,8 +33,11 @@ class PercentageService:
         return percentage
 
     def update_percentage(
-        self, percentage_id: uuid.UUID, payload: PercentageUpdateSchema
+        self, jwt: dict, percentage_id: uuid.UUID, payload: PercentageUpdateSchema
     ):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (percentage := self.get_percentage_by_id(percentage_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Percentual não encontrado")
 

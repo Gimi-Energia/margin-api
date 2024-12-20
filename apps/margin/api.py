@@ -31,8 +31,8 @@ contract_service = ContractService()
 
 @company_router.post("", response=CompanySchema)
 def create_company(request, payload: CompanyCreateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return company_service.create_company(payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return company_service.create_company(jwt, payload)
 
 
 @company_router.get("", response=CompanyListSchema)
@@ -49,14 +49,14 @@ def get_company(request, company_id: uuid.UUID):
 
 @company_router.patch("/{company_id}", response=CompanySchema)
 def update_company(request, company_id: uuid.UUID, payload: CompanyUpdateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return company_service.update_company(company_id, payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return company_service.update_company(jwt, company_id, payload)
 
 
 @company_router.delete("/{company_id}")
 def delete_company(request, company_id: uuid.UUID):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return company_service.delete_company(company_id)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return company_service.delete_company(jwt, company_id)
 
 
 @percentage_router.get("", response=PercentageListSchema)
@@ -75,8 +75,8 @@ def get_percentage(request, percentage_id: uuid.UUID):
 def update_percentage(
     request, percentage_id: uuid.UUID, payload: PercentageUpdateSchema
 ):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return percentage_service.update_percentage(percentage_id, payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return percentage_service.update_percentage(jwt, percentage_id, payload)
 
 
 @contract_router.get("/find", response=ContractFindSchema)

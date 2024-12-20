@@ -47,8 +47,8 @@ def get_state(request, state_id: uuid.UUID):
 
 @ncm_router.post("/groups", response=NCMGroupSchema)
 def create_ncm_group(request, payload: NCMGroupCreateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return ncm_service.create_ncm_group(payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return ncm_service.create_ncm_group(jwt, payload)
 
 
 @ncm_router.get("/groups", response=NCMGroupListSchema)
@@ -65,20 +65,20 @@ def get_ncm_group(request, group_id: uuid.UUID):
 
 @ncm_router.patch("/groups/{group_id}", response=NCMGroupSchema)
 def update_ncm_group(request, group_id: uuid.UUID, payload: NCMGroupCreateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return ncm_service.update_ncm_group(group_id, payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return ncm_service.update_ncm_group(jwt, group_id, payload)
 
 
 @ncm_router.delete("/groups/{group_id}")
 def delete_ncm_group(request, group_id: uuid.UUID):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return ncm_service.delete_ncm_group(group_id)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return ncm_service.delete_ncm_group(jwt, group_id)
 
 
 @ncm_router.post("", response=NCMSchema)
 def create_ncm(request, payload: NCMSCreateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return ncm_service.create_ncm(payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return ncm_service.create_ncm(jwt, payload)
 
 
 @ncm_router.get("", response=NCMSListchema)
@@ -95,41 +95,47 @@ def get_ncm(request, ncm_id: uuid.UUID):
 
 @ncm_router.patch("/{ncm_id}", response=NCMSchema)
 def update_ncm(request, ncm_id: uuid.UUID, payload: NCMSUpdateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return ncm_service.update_ncm(ncm_id, payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return ncm_service.update_ncm(jwt, ncm_id, payload)
 
 
 @ncm_router.delete("/{ncm_id}")
 def delete_ncm(request, ncm_id: uuid.UUID):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return ncm_service.delete_ncm(ncm_id)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return ncm_service.delete_ncm(jwt, ncm_id)
 
 
 @icms_router.post("/rates", response=ICMSRateSchema)
 def create_icms_rate(request, payload: ICMSRateCreateSchema):
-    return icms_service.create_icms_rate(payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return icms_service.create_icms_rate(jwt, payload)
 
 
 @icms_router.get("/rates", response=ICMSRateListSchema)
 def list_icms_rates(request):
+    decode_jwt_token(request.headers.get("Authorization"))
     return icms_service.list_icms_rates()
 
 
 @icms_router.post("/rates/bulk-create")
 def bulk_create_icms_rates(request, payload: ICMSRateBulkCreateSchema):
-    return icms_service.bulk_create_icms_rates(payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return icms_service.bulk_create_icms_rates(jwt, payload)
 
 
 @icms_router.get("/rates/{icms_rate_id}", response=ICMSRateSchema)
 def get_icms_rate(request, icms_rate_id: uuid.UUID):
+    decode_jwt_token(request.headers.get("Authorization"))
     return icms_service.get_icms_rate(icms_rate_id)
 
 
 @icms_router.patch("/rates/{icms_rate_id}", response=ICMSRateSchema)
 def update_icms_rate(request, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema):
-    return icms_service.update_icms_rate(icms_rate_id, payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return icms_service.update_icms_rate(jwt, icms_rate_id, payload)
 
 
 @icms_router.delete("/rates/{icms_rate_id}")
 def delete_icms_rate(request, icms_rate_id: uuid.UUID):
-    return icms_service.delete_icms_rate(icms_rate_id)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return icms_service.delete_icms_rate(jwt, icms_rate_id)

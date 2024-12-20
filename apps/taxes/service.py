@@ -6,10 +6,14 @@ from ninja.errors import HttpError
 
 from apps.taxes.models import Tax
 from apps.taxes.schema import TaxCreateSchema, TaxUpdateSchema
+from utils.validation import ValidationService
 
 
 class TaxesService:
     MAX_ENTRIES = 10
+
+    def __init__(self):
+        self.validation_service = ValidationService()
 
     @staticmethod
     def get_tax_by_id(tax_id: uuid.UUID):
@@ -33,7 +37,10 @@ class TaxesService:
 
         return tax
 
-    def create_tax(self, payload: TaxCreateSchema):
+    def create_tax(self, jwt: dict, payload: TaxCreateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if Tax.objects.count() >= self.MAX_ENTRIES:
             raise HttpError(
                 HTTPStatus.BAD_REQUEST,
@@ -42,7 +49,10 @@ class TaxesService:
 
         return Tax.objects.create(**payload.dict())
 
-    def update_tax(self, tax_id: uuid.UUID, payload: TaxUpdateSchema):
+    def update_tax(self, jwt: dict, tax_id: uuid.UUID, payload: TaxUpdateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (tax := self.get_tax_by_id(tax_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Imposto não encontrado")
 
@@ -54,7 +64,10 @@ class TaxesService:
         tax.save()
         return tax
 
-    def delete_tax(self, tax_id: uuid.UUID):
+    def delete_tax(self, jwt: dict, tax_id: uuid.UUID):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (tax := self.get_tax_by_id(tax_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Imposto não encontrado")
 

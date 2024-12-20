@@ -1,14 +1,18 @@
 import uuid
 from http import HTTPStatus
-from django.http import JsonResponse
 
+from django.http import JsonResponse
 from ninja.errors import HttpError
 
 from apps.icms.models import NCM, NCMGroup
 from apps.icms.schema import NCMGroupCreateSchema, NCMSCreateSchema, NCMSUpdateSchema
+from utils.validation import ValidationService
 
 
 class NCMService:
+    def __init__(self):
+        self.validation_service = ValidationService()
+
     @staticmethod
     def get_ncm_group_by_id(ncm_group_id: uuid.UUID):
         return NCMGroup.objects.filter(pk=ncm_group_id).first()
@@ -35,11 +39,16 @@ class NCMService:
 
         return ncm_group
 
-    @staticmethod
-    def create_ncm_group(payload: NCMGroupCreateSchema):
+    def create_ncm_group(self, jwt: dict, payload: NCMGroupCreateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         return NCMGroup.objects.create(**payload.dict())
 
-    def update_ncm_group(self, group_id: uuid.UUID, payload: NCMGroupCreateSchema):
+    def update_ncm_group(self, jwt: dict, group_id: uuid.UUID, payload: NCMGroupCreateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (ncm_group := self.get_ncm_group_by_id(group_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
 
@@ -50,7 +59,10 @@ class NCMService:
         ncm_group.save()
         return ncm_group
 
-    def delete_ncm_group(self, ncm_group_id: uuid.UUID):
+    def delete_ncm_group(self, jwt: dict, ncm_group_id: uuid.UUID):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (ncm_group := self.get_ncm_group_by_id(ncm_group_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
 
@@ -59,7 +71,10 @@ class NCMService:
             {"detail": "Grupo de NCM deletado com sucesso"}, status=HTTPStatus.OK
         )
 
-    def create_ncm(self, payload: NCMSCreateSchema):
+    def create_ncm(self, jwt: dict, payload: NCMSCreateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (ncm_group := self.get_ncm_group_by_id(payload.group)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
 
@@ -85,7 +100,10 @@ class NCMService:
 
         return ncm
 
-    def update_ncm(self, ncm_id: uuid.UUID, payload: NCMSUpdateSchema):
+    def update_ncm(self, jwt: dict, ncm_id: uuid.UUID, payload: NCMSUpdateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (ncm := self.get_ncm_by_id(ncm_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "NCM não encontrado")
 
@@ -101,7 +119,10 @@ class NCMService:
         ncm.save()
         return ncm
 
-    def delete_ncm(self, ncm_id: uuid.UUID):
+    def delete_ncm(self, jwt: dict, ncm_id: uuid.UUID):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (ncm := self.get_ncm_by_id(ncm_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "NCM não encontrado")
 

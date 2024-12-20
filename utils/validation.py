@@ -13,3 +13,6 @@ class ValidationService:
         if file.size > max_size_in_bytes:
             return False
         return True
+
+    def validate_user_access(self, jwt_data):
+        return jwt_data.get("is_margin_admin", False) is True

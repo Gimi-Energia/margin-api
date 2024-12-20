@@ -12,8 +12,8 @@ service = TaxesService()
 
 @taxes_router.post("", response=TaxSchema)
 def create_tax(request, payload: TaxCreateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return service.create_tax(payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return service.create_tax(jwt, payload)
 
 
 @taxes_router.get("", response=TaxListSchema)
@@ -30,11 +30,11 @@ def get_tax(request, tax_id: uuid.UUID):
 
 @taxes_router.patch("/{tax_id}", response=TaxSchema)
 def update_tax(request, tax_id: uuid.UUID, payload: TaxUpdateSchema):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return service.update_tax(tax_id, payload)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return service.update_tax(jwt, tax_id, payload)
 
 
 @taxes_router.delete("/{tax_id}")
 def delete_tax(request, tax_id: uuid.UUID):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return service.delete_tax(tax_id)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return service.delete_tax(jwt, tax_id)

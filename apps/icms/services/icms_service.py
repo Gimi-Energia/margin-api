@@ -12,18 +12,19 @@ from apps.icms.schema import (
 )
 from apps.icms.services.ncm_service import NCMService
 from apps.icms.services.state_service import StateService
+from utils.validation import ValidationService
 
 
 class ICMSService:
-    @property
-    def ncm_service(self):
-        return NCMService()
+    def __init__(self):
+        self.ncm_service = NCMService()
+        self.state_service = StateService()
+        self.validation_service = ValidationService()
 
-    @property
-    def state_service(self):
-        return StateService()
+    def create_icms_rate(self, jwt: dict, payload: ICMSRateCreateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-    def create_icms_rate(self, payload: ICMSRateCreateSchema):
         if not (state := self.state_service.get_state_by_id(payload.state)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Estado não encontrado")
 
@@ -38,7 +39,10 @@ class ICMSService:
             poverty_rate=payload.poverty_rate,
         )
 
-    def bulk_create_icms_rates(self, payload: ICMSRateBulkCreateSchema):
+    def bulk_create_icms_rates(self, jwt: dict, payload: ICMSRateBulkCreateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (rates := payload.rates):
             raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
 
@@ -124,7 +128,12 @@ class ICMSService:
 
         return icms_rate
 
-    def update_icms_rate(self, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema):
+    def update_icms_rate(
+        self, jwt: dict, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema
+    ):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (icms_rate := self.get_icms_rate_by_id(icms_rate_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
 
@@ -153,7 +162,10 @@ class ICMSService:
 
         return icms_rate
 
-    def delete_icms_rate(self, icms_rate_id: uuid.UUID):
+    def delete_icms_rate(self, jwt: dict, icms_rate_id: uuid.UUID):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (icms_rate := self.get_icms_rate_by_id(icms_rate_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
 

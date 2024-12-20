@@ -6,9 +6,13 @@ from ninja.errors import HttpError
 
 from apps.margin.models import Company
 from apps.margin.schema import CompanyCreateSchema, CompanyUpdateSchema
+from utils.validation import ValidationService
 
 
 class CompanyService:
+    def __init__(self):
+        self.validation_service = ValidationService()
+
     @staticmethod
     def get_company_by_id(company_id: uuid.UUID):
         return Company.objects.filter(pk=company_id).first()
@@ -29,10 +33,16 @@ class CompanyService:
 
         return company
 
-    def create_company(self, payload: CompanyCreateSchema):
+    def create_company(self, jwt: dict, payload: CompanyCreateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         return Company.objects.create(**payload.dict())
 
-    def update_company(self, company_id: uuid.UUID, payload: CompanyUpdateSchema):
+    def update_company(self, jwt: dict, company_id: uuid.UUID, payload: CompanyUpdateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (company := self.get_company_by_id(company_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Empresa não encontrada")
 
@@ -44,7 +54,10 @@ class CompanyService:
         company.save()
         return company
 
-    def delete_company(self, company_id: uuid.UUID):
+    def delete_company(self, jwt: dict, company_id: uuid.UUID):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
         if not (company := self.get_company_by_id(company_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Empresa não encontrada")
 
