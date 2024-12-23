@@ -13,8 +13,13 @@ def icms_service():
     return ICMSService()
 
 
+@pytest.fixture
+def jwt():
+    return {"is_margin_admin": True}
+
+
 @pytest.mark.django_db
-def test_create_icms_rate(icms_service):
+def test_create_icms_rate(icms_service, jwt):
     state = State.objects.create(name="Paraná", code="PR")
     group = NCMGroup.objects.create(name="Group 4")
     payload = {
@@ -25,7 +30,7 @@ def test_create_icms_rate(icms_service):
         "poverty_rate": 1.0,
     }
     icms_rate_schema = ICMSRateCreateSchema(**payload)
-    icms_rate = icms_service.create_icms_rate(icms_rate_schema)
+    icms_rate = icms_service.create_icms_rate(jwt, icms_rate_schema)
     assert icms_rate.state == state
     assert icms_rate.group == group
     assert icms_rate.internal_rate == 18.0

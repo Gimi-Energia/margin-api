@@ -12,6 +12,11 @@ def state_service():
     return StateService()
 
 
+@pytest.fixture
+def jwt():
+    return {"is_margin_admin": True}
+
+
 @pytest.mark.django_db
 def test_get_state_by_id(state_service):
     state = State.objects.create(name="São Paulo", code="SP")
