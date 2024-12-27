@@ -45,12 +45,13 @@ class NCMService:
 
         return NCMGroup.objects.create(**payload.dict())
 
-    def update_ncm_group(self, jwt: dict, group_id: uuid.UUID, payload: NCMGroupCreateSchema):
+    def update_ncm_group(
+        self, jwt: dict, group_id: uuid.UUID, payload: NCMGroupCreateSchema
+    ):
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (ncm_group := self.get_ncm_group_by_id(group_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
+        ncm_group = self.get_ncm_group(group_id)
 
         for attr, value in payload.model_dump(
             exclude_defaults=True, exclude_unset=True
@@ -63,8 +64,7 @@ class NCMService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (ncm_group := self.get_ncm_group_by_id(ncm_group_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
+        ncm_group = self.get_ncm_group(ncm_group_id)
 
         ncm_group.delete()
         return JsonResponse(
@@ -75,8 +75,7 @@ class NCMService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (ncm_group := self.get_ncm_group_by_id(payload.group)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
+        ncm_group = self.get_ncm_group(payload.group)
 
         return NCM.objects.create(code=payload.code, group=ncm_group)
 
@@ -104,16 +103,13 @@ class NCMService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (ncm := self.get_ncm_by_id(ncm_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "NCM não encontrado")
+        ncm = self.get_ncm(ncm_id)
 
         if payload.code is not None:
             ncm.code = payload.code
 
         if payload.group is not None:
-            if not (ncm_group := self.get_ncm_group_by_id(payload.group)):
-                raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
-
+            ncm_group = self.get_ncm_group(payload.group)
             ncm.group = ncm_group
 
         ncm.save()
@@ -123,10 +119,9 @@ class NCMService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (ncm := self.get_ncm_by_id(ncm_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "NCM não encontrado")
-
+        ncm = self.get_ncm(ncm_id)
         ncm.delete()
+
         return JsonResponse(
             {"detail": "NCM deletado com sucesso"}, status=HTTPStatus.OK
         )

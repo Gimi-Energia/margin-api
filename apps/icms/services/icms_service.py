@@ -25,11 +25,8 @@ class ICMSService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (state := self.state_service.get_state_by_id(payload.state)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Estado não encontrado")
-
-        if not (ncm_group := self.ncm_service.get_ncm_group_by_id(payload.group)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
+        state = self.state_service.get_state(payload.state)
+        ncm_group = self.ncm_service.get_ncm(payload.group)
 
         return ICMSRate.objects.create(
             state=state,
@@ -47,8 +44,7 @@ class ICMSService:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
 
         group_id = rates[0].group
-        if not (ncm_group := self.ncm_service.get_ncm_group_by_id(group_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado.")
+        ncm_group = self.ncm_service.get_ncm(group_id)
 
         for rate in rates:
             if rate.group != group_id:
@@ -134,19 +130,14 @@ class ICMSService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (icms_rate := self.get_icms_rate_by_id(icms_rate_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
+        icms_rate = self.get_icms_rate(icms_rate_id)
 
         if payload.state is not None:
-            if not (state := self.state_service.get_state_by_id(payload.state)):
-                raise HttpError(HTTPStatus.NOT_FOUND, "Estado não encontrado")
-
+            state = self.state_service.get_state(payload.state)
             icms_rate.state = state
 
         if payload.group is not None:
-            if not (ncm_group := self.ncm_service.get_ncm_group_by_id(payload.group)):
-                raise HttpError(HTTPStatus.NOT_FOUND, "Grupo de NCM não encontrado")
-
+            ncm_group = self.ncm_service.get_ncm(payload.group)
             icms_rate.group = ncm_group
 
         if payload.internal_rate is not None:
@@ -166,10 +157,9 @@ class ICMSService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (icms_rate := self.get_icms_rate_by_id(icms_rate_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
-
+        icms_rate = self.get_icms_rate(icms_rate_id)
         icms_rate.delete()
+
         return JsonResponse(
             {"detail": "Taxa de ICMS deletada com sucesso"}, status=HTTPStatus.OK
         )

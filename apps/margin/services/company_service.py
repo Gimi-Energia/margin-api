@@ -39,12 +39,13 @@ class CompanyService:
 
         return Company.objects.create(**payload.dict())
 
-    def update_company(self, jwt: dict, company_id: uuid.UUID, payload: CompanyUpdateSchema):
+    def update_company(
+        self, jwt: dict, company_id: uuid.UUID, payload: CompanyUpdateSchema
+    ):
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (company := self.get_company_by_id(company_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Empresa não encontrada")
+        company = self.get_company(company_id)
 
         for attr, value in payload.model_dump(
             exclude_defaults=True, exclude_unset=True
@@ -58,10 +59,9 @@ class CompanyService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (company := self.get_company_by_id(company_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Empresa não encontrada")
-
+        company = self.get_company(company_id)
         company.delete()
+
         return JsonResponse(
             {"detail": "Empresa deletada com sucesso"}, status=HTTPStatus.OK
         )

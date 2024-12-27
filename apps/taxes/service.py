@@ -53,8 +53,7 @@ class TaxesService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (tax := self.get_tax_by_id(tax_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Imposto não encontrado")
+        tax = self.get_tax(tax_id)
 
         for attr, value in payload.model_dump(
             exclude_defaults=True, exclude_unset=True
@@ -68,10 +67,9 @@ class TaxesService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (tax := self.get_tax_by_id(tax_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Imposto não encontrado")
-
+        tax = self.get_tax(tax_id)
         tax.delete()
+        
         return JsonResponse(
             {"detail": "Imposto deletado com sucesso"}, status=HTTPStatus.OK
         )

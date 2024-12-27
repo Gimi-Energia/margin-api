@@ -91,11 +91,7 @@ class ContractService:
         if not (contract := self.get_contract_by_id(contract_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Contrato não encontrada")
 
-        if not (
-            percentage := self.percentage_service.get_percentage_by_id(percentage_id)
-        ):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Porcentagem não encontrada")
-
+        percentage = self.percentage_service.get_percentage(percentage_id)
         margin = percentage.value
 
         sale_price = (
@@ -154,8 +150,7 @@ class ContractService:
         }
 
     def find_iapp_contract(self, company_id: uuid.UUID, contract: str):
-        if not (company := self.company_service.get_company_by_id(company_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Empresa não encontrada")
+        company = self.company_service.get_company(company_id)
 
         token, secret = self._get_credentials(company)
         items = self._get_contract_data(contract, token, secret)

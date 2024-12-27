@@ -38,8 +38,7 @@ class PercentageService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        if not (percentage := self.get_percentage_by_id(percentage_id)):
-            raise HttpError(HTTPStatus.NOT_FOUND, "Percentual não encontrado")
+        percentage = self.get_percentage(percentage_id)
 
         for attr, value in payload.model_dump(
             exclude_defaults=True, exclude_unset=True
