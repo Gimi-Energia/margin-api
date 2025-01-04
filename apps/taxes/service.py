@@ -37,10 +37,7 @@ class TaxesService:
 
         return tax
 
-    def create_tax(self, jwt: dict, payload: TaxCreateSchema):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def create_tax(self, payload: TaxCreateSchema):
         if Tax.objects.count() >= self.MAX_ENTRIES:
             raise HttpError(
                 HTTPStatus.BAD_REQUEST,
@@ -49,10 +46,7 @@ class TaxesService:
 
         return Tax.objects.create(**payload.dict())
 
-    def update_tax(self, jwt: dict, tax_id: uuid.UUID, payload: TaxUpdateSchema):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def update_tax(self, tax_id: uuid.UUID, payload: TaxUpdateSchema):
         tax = self.get_tax(tax_id)
 
         for attr, value in payload.model_dump(
@@ -63,13 +57,10 @@ class TaxesService:
         tax.save()
         return tax
 
-    def delete_tax(self, jwt: dict, tax_id: uuid.UUID):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def delete_tax(self, tax_id: uuid.UUID):
         tax = self.get_tax(tax_id)
         tax.delete()
-        
+
         return JsonResponse(
             {"detail": "Imposto deletado com sucesso"}, status=HTTPStatus.OK
         )

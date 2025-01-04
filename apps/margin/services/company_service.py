@@ -33,18 +33,10 @@ class CompanyService:
 
         return company
 
-    def create_company(self, jwt: dict, payload: CompanyCreateSchema):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def create_company(self, payload: CompanyCreateSchema):
         return Company.objects.create(**payload.dict())
 
-    def update_company(
-        self, jwt: dict, company_id: uuid.UUID, payload: CompanyUpdateSchema
-    ):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def update_company(self, company_id: uuid.UUID, payload: CompanyUpdateSchema):
         company = self.get_company(company_id)
 
         for attr, value in payload.model_dump(
@@ -55,10 +47,7 @@ class CompanyService:
         company.save()
         return company
 
-    def delete_company(self, jwt: dict, company_id: uuid.UUID):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def delete_company(self, company_id: uuid.UUID):
         company = self.get_company(company_id)
         company.delete()
 

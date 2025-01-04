@@ -33,11 +33,8 @@ class PercentageService:
         return percentage
 
     def update_percentage(
-        self, jwt: dict, percentage_id: uuid.UUID, payload: PercentageUpdateSchema
+        self, percentage_id: uuid.UUID, payload: PercentageUpdateSchema
     ):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
         percentage = self.get_percentage(percentage_id)
 
         for attr, value in payload.model_dump(

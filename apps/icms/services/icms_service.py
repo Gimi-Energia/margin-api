@@ -21,10 +21,7 @@ class ICMSService:
         self.state_service = StateService()
         self.validation_service = ValidationService()
 
-    def create_icms_rate(self, jwt: dict, payload: ICMSRateCreateSchema):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def create_icms_rate(self, payload: ICMSRateCreateSchema):
         state = self.state_service.get_state(payload.state)
         ncm_group = self.ncm_service.get_ncm(payload.group)
 
@@ -36,10 +33,7 @@ class ICMSService:
             poverty_rate=payload.poverty_rate,
         )
 
-    def bulk_create_icms_rates(self, jwt: dict, payload: ICMSRateBulkCreateSchema):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def bulk_create_icms_rates(self, payload: ICMSRateBulkCreateSchema):
         if not (rates := payload.rates):
             raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
 
@@ -124,12 +118,7 @@ class ICMSService:
 
         return icms_rate
 
-    def update_icms_rate(
-        self, jwt: dict, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema
-    ):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def update_icms_rate(self, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema):
         icms_rate = self.get_icms_rate(icms_rate_id)
 
         if payload.state is not None:
@@ -153,10 +142,7 @@ class ICMSService:
 
         return icms_rate
 
-    def delete_icms_rate(self, jwt: dict, icms_rate_id: uuid.UUID):
-        if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
-
+    def delete_icms_rate(self, icms_rate_id: uuid.UUID):
         icms_rate = self.get_icms_rate(icms_rate_id)
         icms_rate.delete()
 
