@@ -26,7 +26,7 @@ class ICMSService:
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
         state = self.state_service.get_state(payload.state)
-        ncm_group = self.ncm_service.get_ncm(payload.group)
+        ncm_group = self.ncm_service.get_ncm_group(payload.group)
 
         return ICMSRate.objects.create(
             state=state,
@@ -44,7 +44,7 @@ class ICMSService:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
 
         group_id = rates[0].group
-        ncm_group = self.ncm_service.get_ncm(group_id)
+        ncm_group = self.ncm_service.get_ncm_group(group_id)
 
         for rate in rates:
             if rate.group != group_id:
@@ -137,7 +137,7 @@ class ICMSService:
             icms_rate.state = state
 
         if payload.group is not None:
-            ncm_group = self.ncm_service.get_ncm(payload.group)
+            ncm_group = self.ncm_service.get_ncm_group(payload.group)
             icms_rate.group = ncm_group
 
         if payload.internal_rate is not None:
