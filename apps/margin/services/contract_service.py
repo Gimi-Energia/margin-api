@@ -193,7 +193,8 @@ class ContractService:
             ),
             "delivery_date": datetime.strptime(
                 self.validate_field(
-                    item.get("datas").get("previsao_entrega"), "datas.previsao_entrega"
+                    item.get("datas").get("data_previsao_faturamento"),
+                    "datas.data_previsao_faturamento",
                 ),
                 "%Y-%m-%d",
             ).date(),
