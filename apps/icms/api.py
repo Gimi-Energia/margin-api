@@ -117,6 +117,12 @@ def list_icms_rates(request):
     return icms_service.list_icms_rates()
 
 
+@icms_router.get("/rates/group/{group_id}", response=ICMSRateListSchema)
+def list_icms_rates_by_group(request, group_id: uuid.UUID):
+    decode_jwt_token(request.headers.get("Authorization"))
+    return icms_service.list_icms_rates_by_group(group_id)
+
+
 @icms_router.post("/rates/bulk-create")
 def bulk_create_icms_rates(request, payload: ICMSRateBulkCreateSchema):
     jwt = decode_jwt_token(request.headers.get("Authorization"))

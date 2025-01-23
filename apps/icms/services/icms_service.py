@@ -163,3 +163,12 @@ class ICMSService:
         return JsonResponse(
             {"detail": "Taxa de ICMS deletada com sucesso"}, status=HTTPStatus.OK
         )
+
+    @staticmethod
+    def filter_icms_rate_by_group_id(group_id: uuid.UUID):
+        return ICMSRate.objects.filter(group_id=group_id)
+
+    def list_icms_rates_by_group(self, group_id: uuid.UUID):
+        rates = self.filter_icms_rate_by_group_id(group_id)
+        count = rates.count()
+        return {"count": count, "icms_rates": rates}
