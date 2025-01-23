@@ -25,3 +25,9 @@ class TaxUpdateSchema(Schema):
     name: Optional[str] = None
     presumed_profit_rate: Optional[float] = None
     real_profit_rate: Optional[float] = None
+
+
+class TaxByCompanySchema(Schema):
+    id: uuid.UUID
+    name: str
+    rate: float

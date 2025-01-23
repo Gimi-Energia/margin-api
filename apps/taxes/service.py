@@ -4,6 +4,7 @@ from http import HTTPStatus
 from django.http import JsonResponse
 from ninja.errors import HttpError
 
+from apps.margin.services.company_service import CompanyService
 from apps.taxes.models import Tax
 from apps.taxes.schema import TaxCreateSchema, TaxUpdateSchema
 from utils.validation import ValidationService
@@ -14,6 +15,7 @@ class TaxesService:
 
     def __init__(self):
         self.validation_service = ValidationService()
+        self.company_service = CompanyService()
 
     @staticmethod
     def get_tax_by_id(tax_id: uuid.UUID):
@@ -69,7 +71,12 @@ class TaxesService:
 
         tax = self.get_tax(tax_id)
         tax.delete()
-        
+
         return JsonResponse(
             {"detail": "Imposto deletado com sucesso"}, status=HTTPStatus.OK
         )
+
+    def list_taxes_by_company(self, company_id: uuid.UUID):
+        company = self.company_service.get_company(company_id)
+        taxes = Tax.list_taxes_by_company(company)
+        return list(taxes)

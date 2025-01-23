@@ -2,7 +2,13 @@ import uuid
 
 from ninja import Router
 
-from apps.taxes.schema import TaxCreateSchema, TaxListSchema, TaxSchema, TaxUpdateSchema
+from apps.taxes.schema import (
+    TaxByCompanySchema,
+    TaxCreateSchema,
+    TaxListSchema,
+    TaxSchema,
+    TaxUpdateSchema,
+)
 from apps.taxes.service import TaxesService
 from utils.jwt import JWTAuth, decode_jwt_token
 
@@ -26,6 +32,11 @@ def list_taxes(request):
 def get_tax(request, tax_id: uuid.UUID):
     decode_jwt_token(request.headers.get("Authorization"))
     return service.get_tax(tax_id)
+
+
+@taxes_router.get("/by-company/{company_id}", response=list[TaxByCompanySchema])
+def list_taxes_by_company(request, company_id: uuid.UUID):
+    return service.list_taxes_by_company(company_id)
 
 
 @taxes_router.patch("/{tax_id}", response=TaxSchema)

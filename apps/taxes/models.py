@@ -21,3 +21,13 @@ class Tax(BaseModel):
     @classmethod
     def total_real_profit_rate(cls):
         return cls.objects.aggregate(total=models.Sum("real_profit_rate"))["total"] or 0
+
+    @classmethod
+    def list_taxes_by_company(cls, company):
+        if company.profit_type == "presumed":
+            return cls.objects.values(
+                "id", "name", rate=models.F("presumed_profit_rate")
+            )
+        elif company.profit_type == "real":
+            return cls.objects.values("id", "name", rate=models.F("real_profit_rate"))
+        return cls.objects.none()
