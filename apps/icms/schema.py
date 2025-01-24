@@ -25,22 +25,26 @@ class NCMSCreateSchema(Schema):
     group: uuid.UUID
 
 
-class NCMSchema(Schema):
-    id: uuid.UUID
-    code: str
-
-
-class NCMSListchema(Schema):
-    count: int
-    ncms: list[NCMSchema]
-
-
 class NCMGroupCreateSchema(Schema):
     name: str
 
 
 class NCMGroupRateSchema(NCMGroupCreateSchema):
     id: uuid.UUID
+
+
+class NCMSchema(Schema):
+    id: uuid.UUID
+    code: str
+
+
+class NCMSchemaWithGroup(NCMSchema):
+    group: NCMGroupRateSchema
+
+
+class NCMSListchema(Schema):
+    count: int
+    ncms: list[NCMSchemaWithGroup]
 
 
 class NCMGroupSchema(NCMGroupCreateSchema):

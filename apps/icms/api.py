@@ -12,6 +12,7 @@ from apps.icms.schema import (
     NCMGroupListSchema,
     NCMGroupSchema,
     NCMSchema,
+    NCMSchemaWithGroup,
     NCMSCreateSchema,
     NCMSListchema,
     NCMSUpdateSchema,
@@ -87,7 +88,7 @@ def list_ncms(request):
     return ncm_service.list_ncms()
 
 
-@ncm_router.get("/{ncm_id}", response=NCMSchema)
+@ncm_router.get("/{ncm_id}", response=NCMSchemaWithGroup)
 def get_ncm(request, ncm_id: uuid.UUID):
     decode_jwt_token(request.headers.get("Authorization"))
     return ncm_service.get_ncm(ncm_id)
