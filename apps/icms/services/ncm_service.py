@@ -61,7 +61,12 @@ class NCMService:
             exclude_defaults=True, exclude_unset=True
         ).items():
             setattr(ncm_group, attr, value)
-        ncm_group.save()
+
+        try:
+            ncm_group.save()
+        except IntegrityError as exc:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Grupo de NCM já existe") from exc
+
         return ncm_group
 
     def delete_ncm_group(self, jwt: dict, ncm_group_id: uuid.UUID):
@@ -121,7 +126,13 @@ class NCMService:
             ncm_group = self.get_ncm_group(payload.group)
             ncm.group = ncm_group
 
-        ncm.save()
+        try:
+            ncm.save()
+        except IntegrityError as exc:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST, "NCM com o código especificado já existe"
+            ) from exc
+
         return ncm
 
     def delete_ncm(self, jwt: dict, ncm_id: uuid.UUID):

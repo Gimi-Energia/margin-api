@@ -1,6 +1,6 @@
 import uuid
 from http import HTTPStatus
-
+from django.db import IntegrityError
 from ninja.errors import HttpError
 
 from apps.margin.models import Percentage
@@ -45,5 +45,9 @@ class PercentageService:
         ).items():
             setattr(percentage, attr, value)
 
-        percentage.save()
+        try:
+            percentage.save()
+        except IntegrityError as exc:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Percentual já existe") from exc
+
         return percentage

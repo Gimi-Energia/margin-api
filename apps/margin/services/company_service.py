@@ -1,6 +1,6 @@
 import uuid
 from http import HTTPStatus
-
+from django.db import IntegrityError
 from django.http import JsonResponse
 from ninja.errors import HttpError
 
@@ -37,7 +37,10 @@ class CompanyService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        return Company.objects.create(**payload.dict())
+        try:
+            return Company.objects.create(**payload.dict())
+        except IntegrityError as exc:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Empresa já existe") from exc
 
     def update_company(
         self, jwt: dict, company_id: uuid.UUID, payload: CompanyUpdateSchema
@@ -52,7 +55,11 @@ class CompanyService:
         ).items():
             setattr(company, attr, value)
 
-        company.save()
+        try:
+            company.save()
+        except IntegrityError as exc:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Empresa já existe") from exc
+
         return company
 
     def delete_company(self, jwt: dict, company_id: uuid.UUID):
