@@ -7,6 +7,7 @@ from ninja.errors import HttpError
 from apps.icms.models import ICMSRate
 from apps.icms.schema import (
     ICMSRateBulkCreateSchema,
+    ICMSRateBulkUpdateSchema,
     ICMSRateCreateSchema,
     ICMSRateUpdateSchema,
 )
@@ -98,6 +99,63 @@ class ICMSService:
 
         return JsonResponse(
             {"detail": f"{len(rates_to_create)} registros criados com sucesso"},
+            status=HTTPStatus.OK,
+        )
+
+    def bulk_update_icms_rates(self, jwt: dict, payload: ICMSRateBulkUpdateSchema):
+        if not self.validation_service.validate_user_access(jwt):
+            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+
+        if not (rates := payload.rates):
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
+
+        group_id = rates[0].group
+        ncm_group = self.ncm_service.get_ncm_group(group_id)
+
+        for rate in rates:
+            if rate.group != group_id:
+                raise HttpError(
+                    HTTPStatus.BAD_REQUEST,
+                    "Todos os registros devem usar o mesmo grupo de NCM.",
+                )
+            if (
+                rate.internal_rate is None
+                or rate.difal_rate is None
+                or rate.poverty_rate is None
+            ):
+                raise HttpError(HTTPStatus.BAD_REQUEST, "As taxas não podem ser nulas.")
+
+        all_states_data = self.state_service.list_states()
+        all_states = all_states_data["states"]
+
+        rates_to_update = []
+        for rate in rates:
+            if not (state := next((s for s in all_states if s.id == rate.state), None)):
+                raise HttpError(
+                    HTTPStatus.NOT_FOUND,
+                    f"Estado com ID {rate.state} não encontrado.",
+                )
+            icms_rate = ICMSRate.objects.filter(state=state, group=ncm_group).first()
+            if icms_rate:
+                icms_rate.state = state
+                icms_rate.group = ncm_group
+                icms_rate.internal_rate = rate.internal_rate
+                icms_rate.difal_rate = rate.difal_rate
+                icms_rate.poverty_rate = rate.poverty_rate
+                rates_to_update.append(icms_rate)
+            else:
+                raise HttpError(
+                    HTTPStatus.NOT_FOUND,
+                    f"Taxa de ICMS para o estado {state.code} e grupo {ncm_group.name} não encontrada.",
+                )
+
+        ICMSRate.objects.bulk_update(
+            rates_to_update,
+            ["state", "group", "internal_rate", "difal_rate", "poverty_rate"],
+        )
+
+        return JsonResponse(
+            {"detail": f"{len(rates_to_update)} registros atualizados com sucesso"},
             status=HTTPStatus.OK,
         )
 

@@ -77,6 +77,10 @@ class ICMSRateUpdateSchema(Schema):
     poverty_rate: Optional[float] = None
 
 
+class ICMSRateBulkUpdateSchema(Schema):
+    rates: list[ICMSRateUpdateSchema]
+
+
 class ICMSRateSchema(Schema):
     id: uuid.UUID
     state: StateSchema

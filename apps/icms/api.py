@@ -18,6 +18,7 @@ from apps.icms.schema import (
     NCMSUpdateSchema,
     StateListSchema,
     StateSchema,
+    ICMSRateBulkUpdateSchema,
 )
 from apps.icms.services.icms_service import ICMSService
 from apps.icms.services.ncm_service import NCMService
@@ -128,6 +129,12 @@ def list_icms_rates_by_group(request, group_id: uuid.UUID):
 def bulk_create_icms_rates(request, payload: ICMSRateBulkCreateSchema):
     jwt = decode_jwt_token(request.headers.get("Authorization"))
     return icms_service.bulk_create_icms_rates(jwt, payload)
+
+
+@icms_router.patch("/rates/bulk-update")
+def bulk_update_icms_rates(request, payload: ICMSRateBulkUpdateSchema):
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    return icms_service.bulk_update_icms_rates(jwt, payload)
 
 
 @icms_router.get("/rates/{icms_rate_id}", response=ICMSRateSchema)
