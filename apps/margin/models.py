@@ -18,7 +18,7 @@ class Company(BaseModel):
 
 
 class Percentage(BaseModel):
-    value = models.DecimalField(max_digits=5, decimal_places=2)
+    value = models.DecimalField(max_digits=5, decimal_places=2, unique=True)
 
     def __str__(self):
         return f"{self.value}%"
