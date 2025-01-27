@@ -1,6 +1,7 @@
 import uuid
 from http import HTTPStatus
 
+from django.db import IntegrityError
 from django.http import JsonResponse
 from ninja.errors import HttpError
 
@@ -43,7 +44,10 @@ class NCMService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
 
-        return NCMGroup.objects.create(**payload.dict())
+        try:
+            return NCMGroup.objects.create(**payload.dict())
+        except IntegrityError as exc:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Grupo de NCM já existe") from exc
 
     def update_ncm_group(
         self, jwt: dict, group_id: uuid.UUID, payload: NCMGroupCreateSchema
@@ -77,7 +81,12 @@ class NCMService:
 
         ncm_group = self.get_ncm_group(payload.group)
 
-        return NCM.objects.create(code=payload.code, group=ncm_group)
+        try:
+            return NCM.objects.create(code=payload.code, group=ncm_group)
+        except IntegrityError as exc:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST, "NCM com o código especificado já existe"
+            ) from exc
 
     @staticmethod
     def get_ncm_by_id(ncm_id: uuid.UUID):
