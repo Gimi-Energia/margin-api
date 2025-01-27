@@ -17,7 +17,7 @@ class EmailService:
             "bruno@engenhadev.com",
             "dev3@engenhadev.com",
         ]
-        email_subject = f"App Margem - Retorno do Contrato {contract.contract_number}"
+        email_subject = f"App Margem - Retorno do Contrato {contract.contract_number} ({contract.company})"
         email_body = f"""
         <html>
         <head>
