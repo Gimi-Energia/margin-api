@@ -4,9 +4,6 @@ from apps.icms.models import NCM, ICMSRate, State
 from utils.base_model import BaseModel
 
 
-# Company: ae5fd57e-4815-4738-b6b0-efc93e262188
-# Contract: 6e5eab05-67f7-4402-a631-d0cb3b6e341e
-# Percentage: 1ea4e9a8-42ca-488b-9c58-20f0386523bf
 class Company(BaseModel):
     LUCRO_CHOICES = [
         ("presumed", "Presumed Profit"),

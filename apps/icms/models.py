@@ -2,11 +2,6 @@ from django.db import models
 
 from utils.base_model import BaseModel
 
-# State: "17cd0f46-0af7-4c47-83a6-c17c9a8fefeb"
-# Group: "4711cdbe-5e57-4286-95bc-27b82b6f494c"
-# NCM: "c0c15938-34b1-4e63-be15-d58e6b63b009"
-# Rate: "2b4a1d63-028e-41c0-8de2-67d8a7edc35e"
-
 
 class State(BaseModel):
     name = models.CharField(max_length=100, unique=True)
