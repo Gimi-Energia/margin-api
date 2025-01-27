@@ -52,7 +52,11 @@ class ICMSService:
                     HTTPStatus.BAD_REQUEST,
                     "Todos os registros devem usar o mesmo grupo de NCM.",
                 )
-            if not rate.internal_rate or not rate.difal_rate or not rate.poverty_rate:
+            if (
+                rate.internal_rate is None
+                or rate.difal_rate is None
+                or rate.poverty_rate is None
+            ):
                 raise HttpError(HTTPStatus.BAD_REQUEST, "As taxas não podem ser nulas.")
 
         all_states_data = self.state_service.list_states()
