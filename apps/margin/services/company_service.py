@@ -35,7 +35,7 @@ class CompanyService:
 
     def create_company(self, jwt: dict, payload: CompanyCreateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         try:
             return Company.objects.create(**payload.dict())
@@ -46,7 +46,7 @@ class CompanyService:
         self, jwt: dict, company_id: uuid.UUID, payload: CompanyUpdateSchema
     ):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         company = self.get_company(company_id)
 
@@ -64,7 +64,7 @@ class CompanyService:
 
     def delete_company(self, jwt: dict, company_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         company = self.get_company(company_id)
         company.delete()

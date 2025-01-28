@@ -41,7 +41,7 @@ class TaxesService:
 
     def create_tax(self, jwt: dict, payload: TaxCreateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         if Tax.objects.count() >= self.MAX_ENTRIES:
             raise HttpError(
@@ -53,7 +53,7 @@ class TaxesService:
 
     def update_tax(self, jwt: dict, tax_id: uuid.UUID, payload: TaxUpdateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         tax = self.get_tax(tax_id)
 
@@ -67,7 +67,7 @@ class TaxesService:
 
     def delete_tax(self, jwt: dict, tax_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         tax = self.get_tax(tax_id)
         tax.delete()

@@ -36,7 +36,7 @@ class PercentageService:
         self, jwt: dict, percentage_id: uuid.UUID, payload: PercentageUpdateSchema
     ):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         percentage = self.get_percentage(percentage_id)
 

@@ -42,7 +42,7 @@ class NCMService:
 
     def create_ncm_group(self, jwt: dict, payload: NCMGroupCreateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         try:
             return NCMGroup.objects.create(**payload.dict())
@@ -53,7 +53,7 @@ class NCMService:
         self, jwt: dict, group_id: uuid.UUID, payload: NCMGroupCreateSchema
     ):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         ncm_group = self.get_ncm_group(group_id)
 
@@ -71,7 +71,7 @@ class NCMService:
 
     def delete_ncm_group(self, jwt: dict, ncm_group_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         ncm_group = self.get_ncm_group(ncm_group_id)
 
@@ -82,7 +82,7 @@ class NCMService:
 
     def create_ncm(self, jwt: dict, payload: NCMSCreateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         ncm_group = self.get_ncm_group(payload.group)
 
@@ -115,7 +115,7 @@ class NCMService:
 
     def update_ncm(self, jwt: dict, ncm_id: uuid.UUID, payload: NCMSUpdateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         ncm = self.get_ncm(ncm_id)
 
@@ -137,7 +137,7 @@ class NCMService:
 
     def delete_ncm(self, jwt: dict, ncm_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         ncm = self.get_ncm(ncm_id)
         ncm.delete()

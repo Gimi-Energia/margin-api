@@ -24,7 +24,7 @@ class ICMSService:
 
     def create_icms_rate(self, jwt: dict, payload: ICMSRateCreateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         state = self.state_service.get_state(payload.state)
         ncm_group = self.ncm_service.get_ncm_group(payload.group)
@@ -39,7 +39,7 @@ class ICMSService:
 
     def bulk_create_icms_rates(self, jwt: dict, payload: ICMSRateBulkCreateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         if not (rates := payload.rates):
             raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
@@ -104,7 +104,7 @@ class ICMSService:
 
     def bulk_update_icms_rates(self, jwt: dict, payload: ICMSRateBulkUpdateSchema):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         if not (rates := payload.rates):
             raise HttpError(HTTPStatus.BAD_REQUEST, "Nenhum dado enviado.")
@@ -190,7 +190,7 @@ class ICMSService:
         self, jwt: dict, icms_rate_id: uuid.UUID, payload: ICMSRateUpdateSchema
     ):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         icms_rate = self.get_icms_rate(icms_rate_id)
 
@@ -217,7 +217,7 @@ class ICMSService:
 
     def delete_icms_rate(self, jwt: dict, icms_rate_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
-            raise HttpError(HTTPStatus.UNAUTHORIZED, "Usuário não autorizado")
+            raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
         icms_rate = self.get_icms_rate(icms_rate_id)
         icms_rate.delete()
