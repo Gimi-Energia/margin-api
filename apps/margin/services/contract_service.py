@@ -172,9 +172,7 @@ class ContractService:
         ):
             raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
 
-        net_cost, net_cost_without_taxes = self._calculate_net_costs(
-            item, icms_instance.total_rate, other_taxes
-        )
+        net_cost, net_cost_without_taxes = self._calculate_net_costs(item, other_taxes)
 
         contract_data = {
             "contract_id": self.validate_field(item.get("id"), "id"),
@@ -305,17 +303,17 @@ class ContractService:
             else Tax.total_presumed_profit_rate()
         )
 
-    def _calculate_net_costs(self, item, icms_rate, other_taxes):
+    def _calculate_net_costs(self, item, other_taxes):
         products = item.get("produtos")
         net_cost = sum(
             self.validate_field(
-                product.get("valores").get("unitario"), "valores.unitario"
+                product.get("valores").get("valor_produtos_sem_icms"),
+                "valores.valor_produtos_sem_icms",
             )
             for product in products
         )
-        icms_rate = float(icms_rate) / 100
         other_taxes_rate = float(other_taxes) / 100
-        total_taxes = 1 + (icms_rate + other_taxes_rate)
+        total_taxes = 1 + other_taxes_rate
         net_cost_without_taxes = net_cost / total_taxes
         return net_cost, net_cost_without_taxes
 
