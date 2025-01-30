@@ -22,6 +22,10 @@ class TaxesService:
         return Tax.objects.filter(pk=tax_id).first()
 
     @staticmethod
+    def count_taxes() -> int:
+        return Tax.objects.count()
+
+    @staticmethod
     def list_taxes():
         taxes = Tax.objects.all()
         count = taxes.count()
@@ -68,6 +72,11 @@ class TaxesService:
     def delete_tax(self, jwt: dict, tax_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
+
+        if self.count_taxes() <= 1:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST, "Não é possível deletar o último imposto"
+            )
 
         tax = self.get_tax(tax_id)
         tax.delete()

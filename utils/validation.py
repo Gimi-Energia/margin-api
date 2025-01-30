@@ -1,3 +1,5 @@
+import re
+
 from ninja.files import UploadedFile
 
 
@@ -14,5 +16,8 @@ class ValidationService:
             return False
         return True
 
-    def validate_user_access(self, jwt_data):
+    def validate_user_access(self, jwt_data) -> bool:
         return jwt_data.get("is_margin_admin", False) is True
+
+    def validate_ncm_code_format(self, code: str) -> bool:
+        return bool(re.match(r"^\d{4}\.\d{2}\.\d{2}$", code))

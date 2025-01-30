@@ -29,6 +29,10 @@ class NCMService:
         return ncm.group
 
     @staticmethod
+    def count_ncm_groups() -> int:
+        return NCMGroup.objects.count()
+
+    @staticmethod
     def list_ncm_groups():
         ncm_groups = NCMGroup.objects.prefetch_related("ncms").all()
         count = ncm_groups.count()
@@ -73,9 +77,14 @@ class NCMService:
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
 
-        ncm_group = self.get_ncm_group(ncm_group_id)
+        if self.count_ncm_groups() <= 1:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST, "Não é possível deletar o último grupo de NCM"
+            )
 
+        ncm_group = self.get_ncm_group(ncm_group_id)
         ncm_group.delete()
+
         return JsonResponse(
             {"detail": "Grupo de NCM deletado com sucesso"}, status=HTTPStatus.OK
         )
@@ -83,6 +92,9 @@ class NCMService:
     def create_ncm(self, jwt: dict, payload: NCMSCreateSchema):
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
+
+        if not self.validation_service.validate_ncm_code_format(payload.code):
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Código NCM no formato inválido")
 
         ncm_group = self.get_ncm_group(payload.group)
 
@@ -100,6 +112,10 @@ class NCMService:
     @staticmethod
     def get_ncm_by_code(ncm_code: str):
         return NCM.objects.filter(code=ncm_code).first()
+
+    @staticmethod
+    def count_ncms() -> int:
+        return NCM.objects.count()
 
     @staticmethod
     def list_ncms():
@@ -138,6 +154,11 @@ class NCMService:
     def delete_ncm(self, jwt: dict, ncm_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
+
+        if self.count_ncms() <= 1:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST, "Não é possível deletar o último NCM"
+            )
 
         ncm = self.get_ncm(ncm_id)
         ncm.delete()

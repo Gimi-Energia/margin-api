@@ -157,6 +157,10 @@ class ContractService:
 
         item = items[0]
         products = self.validate_field(item.get("produtos"), "produtos")
+
+        if len(products) == 0:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Contrato sem produtos.")
+
         ncm_instance = self._validate_ncm(products)
 
         other_taxes = self._calculate_other_taxes(company.profit_type)
@@ -225,20 +229,19 @@ class ContractService:
                     "quantity": product["qtde"],
                     "product_id": product["produto"].get("id"),
                     "name": self.validate_field(
-                        product["produto"].get("identificacao"),
-                        f"produto.{index}.identificacao",
+                        product["tags"].get("produto"), f"tags.{index}.produto"
                     ),
                     "contribution_rate": (
                         (
                             self.validate_field(
-                                product["valores"].get("unitario"),
-                                f"valores.{index}.unitario",
+                                product["valores"].get("valor_produtos_sem_icms"),
+                                f"valores.{index}.valor_produtos_sem_icms",
                             )
-                            / item["valores"]["valor_produtos"]
+                            / item["valores"]["valor_produtos_sem_icms"]
                         )
                         * 100
                     )
-                    if item["valores"]["valor_produtos"] > 0
+                    if item["valores"]["valor_produtos_sem_icms"] > 0
                     else 0,
                     "updated_value": None,
                 }

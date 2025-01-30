@@ -84,9 +84,9 @@ class EmailService:
                 <li><strong>ICMS:</strong> {format_percent(contract.icms.total_rate / 100, format="0.00%", locale="pt_BR")}</li>
                 <li><strong>Outros impostos:</strong> {format_percent(contract.other_taxes / 100, format="0.00%", locale="pt_BR")}</li>
                 <li><strong>Margem:</strong> {format_percent(contract.margin.value / 100, format="0.00%", locale="pt_BR")}</li>
-                <li><strong>Total:</strong> {format_currency(contract.net_cost, "BRL", locale="pt_BR")}</li>
-                <li><strong>Total sem impostos:</strong> {format_currency(contract.net_cost_without_taxes, "BRL", locale="pt_BR")}</li>
-                <li><strong>Total com margem:</strong> {format_currency(contract.net_cost_with_margin, "BRL", locale="pt_BR")}</li>
+                <li><strong>Custo líquido:</strong> {format_currency(contract.net_cost, "BRL", locale="pt_BR")}</li>
+                <li><strong>Custo líquido sem impostos:</strong> {format_currency(contract.net_cost_without_taxes, "BRL", locale="pt_BR")}</li>
+                <li><strong>Custo atualizado</strong> {format_currency(contract.net_cost_with_margin, "BRL", locale="pt_BR")}</li>
             </ul>
             <a href="https://iapp.iniciativaaplicativos.com.br/comercial/contratos/editar?id={contract.contract_id}" class="button">Ver Contrato</a>
             <h3>Itens do contrato:</h3>

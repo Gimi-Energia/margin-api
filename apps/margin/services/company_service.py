@@ -18,6 +18,10 @@ class CompanyService:
         return Company.objects.filter(pk=company_id).first()
 
     @staticmethod
+    def count_companies() -> int:
+        return Company.objects.count()
+
+    @staticmethod
     def list_companies():
         companies = Company.objects.all()
         count = companies.count()
@@ -65,6 +69,11 @@ class CompanyService:
     def delete_company(self, jwt: dict, company_id: uuid.UUID):
         if not self.validation_service.validate_user_access(jwt):
             raise HttpError(HTTPStatus.FORBIDDEN, "Usuário não autorizado")
+
+        if self.count_companies() <= 1:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST, "Não é possível deletar a última empresa"
+            )
 
         company = self.get_company(company_id)
         company.delete()
