@@ -18,7 +18,7 @@ class PercentageService:
 
     @staticmethod
     def list_percentages():
-        percentages = Percentage.objects.all()
+        percentages = Percentage.objects.all().order_by("id")
         count = percentages.count()
 
         return {
