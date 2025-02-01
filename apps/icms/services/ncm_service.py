@@ -52,6 +52,10 @@ class NCMService:
             return NCMGroup.objects.create(**payload.dict())
         except IntegrityError as exc:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Grupo de NCM já existe") from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao criar grupo de NCM"
+            ) from exc
 
     def update_ncm_group(
         self, jwt: dict, group_id: uuid.UUID, payload: NCMGroupCreateSchema
@@ -70,6 +74,10 @@ class NCMService:
             ncm_group.save()
         except IntegrityError as exc:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Grupo de NCM já existe") from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar grupo de NCM"
+            ) from exc
 
         return ncm_group
 
@@ -103,6 +111,10 @@ class NCMService:
         except IntegrityError as exc:
             raise HttpError(
                 HTTPStatus.BAD_REQUEST, "NCM com o código especificado já existe"
+            ) from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao criar NCM"
             ) from exc
 
     @staticmethod
@@ -147,6 +159,10 @@ class NCMService:
         except IntegrityError as exc:
             raise HttpError(
                 HTTPStatus.BAD_REQUEST, "NCM com o código especificado já existe"
+            ) from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar NCM"
             ) from exc
 
         return ncm
