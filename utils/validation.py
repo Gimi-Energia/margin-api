@@ -2,14 +2,14 @@ import re
 
 from ninja.files import UploadedFile
 
-from utils.brasil_api_service import BrasilApiService
+from utils.brasil_api_service import BrasilAPIService
 
 
 class ValidationService:
     MAX_IMAGE_SIZE_MB = 4
 
     def __init__(self):
-        self.brasil_api_service = BrasilApiService()
+        self.brasil_api_service = BrasilAPIService()
 
     def validate_image_format(self, picture: str) -> bool:
         allowed_formats = ["jpg", "jpeg", "png"]
