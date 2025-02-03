@@ -49,5 +49,9 @@ class PercentageService:
             percentage.save()
         except IntegrityError as exc:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Percentual já existe") from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar percentual"
+            ) from exc
 
         return percentage

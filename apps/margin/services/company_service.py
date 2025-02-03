@@ -45,6 +45,10 @@ class CompanyService:
             return Company.objects.create(**payload.dict())
         except IntegrityError as exc:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Empresa já existe") from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao criar empresa"
+            ) from exc
 
     def update_company(
         self, jwt: dict, company_id: uuid.UUID, payload: CompanyUpdateSchema
@@ -63,6 +67,10 @@ class CompanyService:
             company.save()
         except IntegrityError as exc:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Empresa já existe") from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar empresa"
+            ) from exc
 
         return company
 

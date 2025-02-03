@@ -1,6 +1,7 @@
 import uuid
 from http import HTTPStatus
 
+from django.db import IntegrityError
 from django.http import JsonResponse
 from ninja.errors import HttpError
 
@@ -53,7 +54,14 @@ class TaxesService:
                 f"O limite de {self.MAX_ENTRIES} impostos foi atingido.",
             )
 
-        return Tax.objects.create(**payload.dict())
+        try:
+            return Tax.objects.create(**payload.dict())
+        except IntegrityError as exc:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Esse imposto já existe") from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao criar imposto"
+            ) from exc
 
     def update_tax(self, jwt: dict, tax_id: uuid.UUID, payload: TaxUpdateSchema):
         if not self.validation_service.validate_user_access(jwt):
@@ -66,7 +74,15 @@ class TaxesService:
         ).items():
             setattr(tax, attr, value)
 
-        tax.save()
+        try:
+            tax.save()
+        except IntegrityError as exc:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Esse imposto já existe") from exc
+        except Exception as exc:
+            raise HttpError(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar imposto"
+            ) from exc
+
         return tax
 
     def delete_tax(self, jwt: dict, tax_id: uuid.UUID):
