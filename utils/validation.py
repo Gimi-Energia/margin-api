@@ -2,9 +2,14 @@ import re
 
 from ninja.files import UploadedFile
 
+from utils.brasil_api_service import BrasilApiService
+
 
 class ValidationService:
     MAX_IMAGE_SIZE_MB = 4
+
+    def __init__(self):
+        self.brasil_api_service = BrasilApiService()
 
     def validate_image_format(self, picture: str) -> bool:
         allowed_formats = ["jpg", "jpeg", "png"]
@@ -21,3 +26,6 @@ class ValidationService:
 
     def validate_ncm_code_format(self, code: str) -> bool:
         return bool(re.match(r"^\d{4}\.\d{2}\.\d{2}$", code))
+
+    def validate_ncm_code(self, code: str) -> bool:
+        return bool(self.brasil_api_service.get_ncm(code))

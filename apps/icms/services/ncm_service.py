@@ -96,6 +96,9 @@ class NCMService:
         if not self.validation_service.validate_ncm_code_format(payload.code):
             raise HttpError(HTTPStatus.BAD_REQUEST, "Código NCM no formato inválido")
 
+        if not self.validation_service.validate_ncm_code(payload.code):
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Código NCM inválido")
+
         ncm_group = self.get_ncm_group(payload.group)
 
         try:
@@ -136,6 +139,14 @@ class NCMService:
         ncm = self.get_ncm(ncm_id)
 
         if payload.code is not None:
+            if not self.validation_service.validate_ncm_code_format(payload.code):
+                raise HttpError(
+                    HTTPStatus.BAD_REQUEST, "Código NCM no formato inválido"
+                )
+
+            if not self.validation_service.validate_ncm_code(payload.code):
+                raise HttpError(HTTPStatus.BAD_REQUEST, "Código NCM inválido")
+
             ncm.code = payload.code
 
         if payload.group is not None:
