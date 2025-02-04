@@ -15,6 +15,7 @@ from apps.margin.services.company_service import CompanyService
 from apps.margin.services.email_service import EmailService
 from apps.margin.services.percentage_service import PercentageService
 from apps.taxes.models import Tax
+from utils.gimix_service import GIMIxService
 
 
 class ContractService:
@@ -25,12 +26,13 @@ class ContractService:
         self.icms_service = ICMSService()
         self.percentage_service = PercentageService()
         self.email_service = EmailService()
+        self.gimix_service = GIMIxService()
 
     @staticmethod
     def get_contract_by_id(contract_id: uuid.UUID):
         return Contract.objects.filter(pk=contract_id).first()
 
-    def return_iapp_contract(self, contract_id: uuid.UUID):
+    def return_iapp_contract(self, contract_id: uuid.UUID, user_email: str, token: str):
         if not (contract := self.get_contract_by_id(contract_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Contrato não encontrado")
 
@@ -38,7 +40,10 @@ class ContractService:
         payload = self._prepare_update_payload(contract)
         self._update_contract_data(contract.contract_id, payload, token, secret)
 
-        self.email_service.send_margin_email(contract)
+        recipients = self.gimix_service.get_margin_admins_email(token)
+        recipients.append(user_email)
+
+        self.email_service.send_margin_email(contract, recipients)
 
         return {
             "detail": f"Retorno do contrato {contract.contract_number} realizado com sucesso.",

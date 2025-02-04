@@ -93,5 +93,7 @@ def calculate_iapp_contract(request, contract_id: uuid.UUID, percentage_id: uuid
 
 @contract_router.get("/return", response=ContractReturnSchema)
 def return_iapp_contract(request, contract_id: uuid.UUID):
-    decode_jwt_token(request.headers.get("Authorization"))
-    return contract_service.return_iapp_contract(contract_id)
+    jwt = decode_jwt_token(request.headers.get("Authorization"))
+    user_email = jwt.get("email")
+    token = request.headers.get("Authorization").split(" ")[1]
+    return contract_service.return_iapp_contract(contract_id, user_email, token)

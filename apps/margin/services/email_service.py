@@ -10,13 +10,8 @@ from apps.margin.models import Contract
 
 class EmailService:
     @staticmethod
-    def send_margin_email(contract: Contract):
+    def send_margin_email(contract: Contract, recipients: list[str]):
         email_from = settings.EMAIL_HOST_USER
-        recipient_list = [
-            "dev2@engenhadev.com",
-            "bruno@engenhadev.com",
-            "dev3@engenhadev.com",
-        ]
         email_subject = f"App Margem - Retorno do Contrato {contract.contract_number} ({contract.company})"
         email_body = f"""
         <html>
@@ -124,7 +119,7 @@ class EmailService:
                 subject=email_subject,
                 message=email_subject,
                 from_email=email_from,
-                recipient_list=recipient_list,
+                recipient_list=recipients,
                 html_message=email_body,
                 fail_silently=False,
             )
