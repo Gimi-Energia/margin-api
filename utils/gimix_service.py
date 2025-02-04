@@ -27,6 +27,5 @@ class GIMIxService:
     def get_margin_admins_email(self, token: str):
         endpoint = "users/emails?is_margin_admin=true"
         response = self.send_request(endpoint, "GET", token)
-        json_response = response.json()
 
-        return json_response
+        return response
