@@ -32,7 +32,9 @@ class ContractService:
     def get_contract_by_id(contract_id: uuid.UUID):
         return Contract.objects.filter(pk=contract_id).first()
 
-    def return_iapp_contract(self, contract_id: uuid.UUID, user_email: str, token: str):
+    def return_iapp_contract(
+        self, contract_id: uuid.UUID, user_email: str, bearer_token: str
+    ):
         if not (contract := self.get_contract_by_id(contract_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Contrato não encontrado")
 
@@ -40,7 +42,7 @@ class ContractService:
         payload = self._prepare_update_payload(contract)
         self._update_contract_data(contract.contract_id, payload, token, secret)
 
-        recipients = self.gimix_service.get_margin_admins_email(token)
+        recipients = self.gimix_service.get_margin_admins_email(bearer_token)
         recipients.append(user_email)
 
         self.email_service.send_margin_email(contract, recipients)
