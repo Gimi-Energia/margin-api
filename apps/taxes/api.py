@@ -21,7 +21,7 @@ service = TaxesService()
 @taxes_router.post(
     "",
     response={
-        HTTPStatus.CREATED: TaxSchema,
+        HTTPStatus.OK: TaxSchema,
         HTTPStatus.FORBIDDEN: ErrorSchema,
         HTTPStatus.BAD_REQUEST: ErrorSchema,
         HTTPStatus.INTERNAL_SERVER_ERROR: ErrorSchema,

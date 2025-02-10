@@ -34,7 +34,7 @@ contract_service = ContractService()
 @company_router.post(
     "",
     response={
-        HTTPStatus.CREATED: CompanySchema,
+        HTTPStatus.OK: CompanySchema,
         HTTPStatus.FORBIDDEN: ErrorSchema,
         HTTPStatus.BAD_REQUEST: ErrorSchema,
         HTTPStatus.INTERNAL_SERVER_ERROR: ErrorSchema,

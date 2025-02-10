@@ -61,7 +61,7 @@ def get_state(request, state_id: uuid.UUID):
 @ncm_router.post(
     "/groups",
     response={
-        HTTPStatus.CREATED: NCMGroupSchema,
+        HTTPStatus.OK: NCMGroupSchema,
         HTTPStatus.FORBIDDEN: ErrorSchema,
         HTTPStatus.BAD_REQUEST: ErrorSchema,
         HTTPStatus.INTERNAL_SERVER_ERROR: ErrorSchema,
@@ -126,7 +126,7 @@ def delete_ncm_group(request, group_id: uuid.UUID):
 @ncm_router.post(
     "",
     response={
-        HTTPStatus.CREATED: NCMSchema,
+        HTTPStatus.OK: NCMSchema,
         HTTPStatus.FORBIDDEN: ErrorSchema,
         HTTPStatus.BAD_REQUEST: ErrorSchema,
         HTTPStatus.INTERNAL_SERVER_ERROR: ErrorSchema,
@@ -190,7 +190,7 @@ def delete_ncm(request, ncm_id: uuid.UUID):
 @icms_router.post(
     "/rates",
     response={
-        HTTPStatus.CREATED: ICMSRateSchema,
+        HTTPStatus.OK: ICMSRateSchema,
         HTTPStatus.FORBIDDEN: ErrorSchema,
         HTTPStatus.BAD_REQUEST: ErrorSchema,
         HTTPStatus.INTERNAL_SERVER_ERROR: ErrorSchema,
