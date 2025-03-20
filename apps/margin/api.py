@@ -144,9 +144,11 @@ def update_percentage(
         HTTPStatus.INTERNAL_SERVER_ERROR: ErrorSchema,
     },
 )
-def find_iapp_contract(request, company_id: uuid.UUID, contract: str):
+def find_iapp_contract(
+    request, company_id: uuid.UUID, contract: str, is_end_consumer: bool
+):
     decode_jwt_token(request.headers.get("Authorization"))
-    return contract_service.find_iapp_contract(company_id, contract)
+    return contract_service.find_iapp_contract(company_id, contract, is_end_consumer)
 
 
 @contract_router.get(

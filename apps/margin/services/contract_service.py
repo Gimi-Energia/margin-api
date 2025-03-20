@@ -156,7 +156,9 @@ class ContractService:
             "margin": contract.margin,
         }
 
-    def find_iapp_contract(self, company_id: uuid.UUID, contract: str):
+    def find_iapp_contract(
+        self, company_id: uuid.UUID, contract: str, is_end_consumer: bool
+    ):
         company = self.company_service.get_company(company_id)
 
         token, secret = self._get_credentials(company)
