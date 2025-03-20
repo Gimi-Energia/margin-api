@@ -55,6 +55,7 @@ class Contract(BaseModel):
         blank=True,
         related_name="contracts",
     )
+    is_end_consumer = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Contract {self.contract_number} - {self.company}"

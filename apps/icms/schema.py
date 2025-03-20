@@ -17,11 +17,13 @@ class StateListSchema(Schema):
 
 class NCMSUpdateSchema(Schema):
     code: Optional[str] = None
+    percentage_end_consumer: Optional[float] = None
     group: Optional[uuid.UUID] = None
 
 
 class NCMSCreateSchema(Schema):
     code: str
+    percentage_end_consumer: float
     group: uuid.UUID
 
 
@@ -36,6 +38,7 @@ class NCMGroupRateSchema(NCMGroupCreateSchema):
 class NCMSchema(Schema):
     id: uuid.UUID
     code: str
+    percentage_end_consumer: float
 
 
 class NCMSchemaWithGroup(NCMSchema):
@@ -107,3 +110,4 @@ class StateContractSchema(Schema):
 
 class NCMContractSchema(Schema):
     code: str
+    end_consumer_percentage: float

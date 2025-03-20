@@ -75,6 +75,7 @@ class ContractFindSchema(Schema):
     ncm: NCMContractSchema
     icms: ICMSRateContractSchema
     other_taxes: float
+    is_end_consumer: bool
     items: list[ProductFindSchema]
 
 
@@ -94,6 +95,7 @@ class ContractCalculateSchema(Schema):
     icms: ICMSRateContractSchema
     other_taxes: float
     margin: PercentageContractSchema
+    is_end_consumer: bool
     items: list[ProductCalculateSchema]
 
 
