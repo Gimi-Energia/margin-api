@@ -100,6 +100,7 @@ class ContractService:
 
         percentage = self.percentage_service.get_percentage(percentage_id)
         margin = percentage.value
+        end_consumer_rate = contract.ncm.percentage_end_consumer or 0
 
         sale_price = (
             float(contract.net_cost_without_taxes) + float(contract.freight_value)
@@ -109,6 +110,7 @@ class ContractService:
             - (float(contract.other_taxes) / 100)
             - (float(margin) / 100)
             - (float(contract.commission) / 100)
+            - (float(end_consumer_rate) / 100 if end_consumer_rate > 0 else 0)
         )
 
         sale_price = round(sale_price + 0.5)
@@ -231,6 +233,7 @@ class ContractService:
             ),
             "xped": item.get("xped") or "N/A",
             "margin": None,
+            "is_end_consumer": is_end_consumer,
             "items": [
                 {
                     "index": index,
@@ -353,6 +356,7 @@ class ContractService:
                     installments=contract_data["installments"],
                     xped=contract_data["xped"],
                     margin=contract_data["margin"],
+                    is_end_consumer=contract_data["is_end_consumer"],
                 )
                 contract_data["id"] = contract.id
 
