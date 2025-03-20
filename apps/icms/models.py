@@ -21,6 +21,9 @@ class NCMGroup(BaseModel):
 class NCM(BaseModel):
     code = models.CharField(max_length=10, unique=True)
     group = models.ForeignKey(NCMGroup, on_delete=models.CASCADE, related_name="ncms")
+    percentage_end_consumer = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
 
     def __str__(self):
         return str(self.code)
