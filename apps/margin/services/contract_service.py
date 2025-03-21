@@ -313,9 +313,9 @@ class ContractService:
 
     def _calculate_other_taxes(self, company_type):
         return (
-            Tax.total_real_profit_rate()
+            Tax.total_real_profit_rate_with_deduct()
             if company_type == "real"
-            else Tax.total_presumed_profit_rate()
+            else Tax.total_presumed_profit_rate_with_deduct()
         )
 
     def _calculate_net_costs(self, item, other_taxes):

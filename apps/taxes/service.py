@@ -34,7 +34,9 @@ class TaxesService:
         return {
             "count": count,
             "total_presumed_profit_rate": Tax.total_presumed_profit_rate(),
+            "total_presumed_profit_rate_with_deduct": Tax.total_presumed_profit_rate_with_deduct(),
             "total_real_profit_rate": Tax.total_real_profit_rate(),
+            "total_real_profit_rate_with_deduct": Tax.total_real_profit_rate_with_deduct(),
             "taxes": taxes,
         }
 
