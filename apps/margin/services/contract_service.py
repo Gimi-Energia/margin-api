@@ -337,8 +337,8 @@ class ContractService:
             for product in products
         )
         other_taxes_rate = float(other_taxes) / 100
-        total_taxes = 1 + other_taxes_rate
-        net_cost_without_taxes = net_cost / total_taxes
+        total_taxes = 1 - other_taxes_rate
+        net_cost_without_taxes = net_cost * total_taxes
         return net_cost, net_cost_without_taxes
 
     def _save_contract(self, contract_data):
