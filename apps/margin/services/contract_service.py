@@ -94,7 +94,9 @@ class ContractService:
             f"Erro {response.status_code}: Instabilidade no iApp.",
         )
 
-    def calculate_iapp_contract(self, contract_id: uuid.UUID, percentage_id: uuid.UUID):
+    def calculate_iapp_contract(
+        self, contract_id: uuid.UUID, percentage_id: uuid.UUID, admin_rate: float
+    ):
         if not (contract := self.get_contract_by_id(contract_id)):
             raise HttpError(HTTPStatus.NOT_FOUND, "Contrato não encontrada")
 
@@ -102,9 +104,14 @@ class ContractService:
         margin = percentage.value
         end_consumer_rate = contract.ncm.percentage_end_consumer or 0
 
-        sale_price = (
-            float(contract.net_cost_without_taxes) + float(contract.freight_value)
-        ) / (
+        freight_equation = float(contract.freight_value) / (
+            1
+            - (float(contract.other_taxes) / 100)
+            - (float(admin_rate) / 100)
+            - (float(contract.commission) / 100)
+        )
+
+        margin_equation = float(contract.net_cost_without_taxes) / (
             1
             - (float(contract.icms.total_rate) / 100)
             - (float(contract.other_taxes) / 100)
@@ -112,6 +119,8 @@ class ContractService:
             - (float(contract.commission) / 100)
             - (float(end_consumer_rate) / 100 if end_consumer_rate > 0 else 0)
         )
+
+        sale_price = margin_equation + freight_equation
 
         sale_price = round(sale_price + 0.5)
 

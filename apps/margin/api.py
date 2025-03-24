@@ -161,9 +161,13 @@ def find_iapp_contract(
         HTTPStatus.INTERNAL_SERVER_ERROR: ErrorSchema,
     },
 )
-def calculate_iapp_contract(request, contract_id: uuid.UUID, percentage_id: uuid.UUID):
+def calculate_iapp_contract(
+    request, contract_id: uuid.UUID, percentage_id: uuid.UUID, admin_rate: float
+):
     decode_jwt_token(request.headers.get("Authorization"))
-    return contract_service.calculate_iapp_contract(contract_id, percentage_id)
+    return contract_service.calculate_iapp_contract(
+        contract_id, percentage_id, admin_rate
+    )
 
 
 @contract_router.get(
