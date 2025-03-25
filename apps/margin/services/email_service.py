@@ -71,6 +71,9 @@ class EmailService:
                 <li><strong>Número:</strong> {contract.contract_number}</li>
                 <li><strong>Empresa:</strong> {contract.company}</li>
                 <li><strong>Cliente:</strong> {contract.client_name}</li>
+                <li><strong>Consumidor final:</strong> {"Sim" if contract.is_end_consumer else "Não"}</li>
+                <li><strong>Percentual NCM:</strong> {format_percent(contract.end_consumer_rate / 100, format="0.00%", locale="pt_BR") if contract.is_end_consumer else "N/D"}</li>
+                <li><strong>Contribuinte ICMS:</strong> {"Sim" if contract.is_icms_taxpayer else "Não"}</li>
                 <li><strong>Obra:</strong> {contract.construction_name}</li>
                 <li><strong>Estado:</strong> {contract.state.name}</li>
                 <li><strong>NCM:</strong> {contract.ncm.code}</li>
@@ -78,6 +81,8 @@ class EmailService:
                 <li><strong>Comissão:</strong> {format_percent(contract.commission / 100, format="0.00%", locale="pt_BR")}</li>
                 <li><strong>ICMS:</strong> {format_percent(contract.icms.total_rate / 100, format="0.00%", locale="pt_BR")}</li>
                 <li><strong>Outros impostos:</strong> {format_percent(contract.other_taxes / 100, format="0.00%", locale="pt_BR")}</li>
+                <li><strong>Impostos considerados:</strong> {contract.taxes_considered}</li>
+                <li><strong>Taxa ADM:</strong> {format_percent(contract.admin_rate / 100, format="0.00%", locale="pt_BR")}</li>
                 <li><strong>Margem:</strong> {format_percent(contract.margin.value / 100, format="0.00%", locale="pt_BR")}</li>
                 <li><strong>Custo líquido:</strong> {format_currency(contract.net_cost, "BRL", locale="pt_BR")}</li>
                 <li><strong>Custo líquido sem impostos:</strong> {format_currency(contract.net_cost_without_taxes, "BRL", locale="pt_BR")}</li>

@@ -104,7 +104,15 @@ class ContractService:
 
         percentage = self.percentage_service.get_percentage(percentage_id)
         margin = percentage.value
-        end_consumer_rate = contract.ncm.percentage_end_consumer or 0
+        end_consumer_rate = (
+            contract.ncm.percentage_end_consumer if contract.is_end_consumer else 0
+        )
+
+        if contract.is_end_consumer and end_consumer_rate == 0:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST,
+                "NCM não possui percentual para consumidor final.",
+            )
 
         freight_equation = float(contract.freight_value) / (
             1
@@ -129,6 +137,8 @@ class ContractService:
         with transaction.atomic():
             contract.net_cost_with_margin = sale_price
             contract.margin = percentage
+            contract.end_consumer_rate = end_consumer_rate
+            contract.admin_rate = admin_rate
             contract.save()
 
             items = contract.items.all()
@@ -189,7 +199,9 @@ class ContractService:
 
         ncm_instance = self._validate_ncm(products)
 
-        other_taxes = self._calculate_other_taxes(company.profit_type, taxes_considered)
+        other_taxes, taxes_str = self._calculate_other_taxes(
+            company.profit_type, taxes_considered
+        )
 
         state = self.validate_field(item.get("cliente").get("estado"), "cliente.estado")
         if not (state_instance := self.state_service.get_state_by_code(state)):
@@ -249,6 +261,10 @@ class ContractService:
             "xped": item.get("xped") or "N/A",
             "margin": None,
             "is_end_consumer": is_end_consumer,
+            "end_consumer_rate": None,
+            "admin_rate": None,
+            "taxes_considered": taxes_str,
+            "is_icms_taxpayer": None,
             "items": [
                 {
                     "index": index,
@@ -331,14 +347,19 @@ class ContractService:
             raise HttpError(HTTPStatus.BAD_REQUEST, "Impostos considerados ausentes.")
 
         total = 0
+        taxes_list = []
         for tax_id in taxes_considered:
             tax = self.tax_service.get_tax(tax_id)
             if company_type == "presumed" and tax.presumed_profit_deducts_net_cost:
                 total += tax.presumed_profit_rate
-            if company_type == "real" and tax.real_profit_deducts_net_cost:
+                taxes_list.append(f"{tax.name} ({tax.presumed_profit_rate}%)")
+            elif company_type == "real" and tax.real_profit_deducts_net_cost:
                 total += tax.real_profit_rate
+                taxes_list.append(f"{tax.name} ({tax.real_profit_rate}%)")
 
-        return total
+        taxes_considered_str = ", ".join(taxes_list)
+
+        return total, taxes_considered_str
 
     def _calculate_net_costs(self, item, other_taxes):
         products = item.get("produtos")
@@ -379,6 +400,10 @@ class ContractService:
                     xped=contract_data["xped"],
                     margin=contract_data["margin"],
                     is_end_consumer=contract_data["is_end_consumer"],
+                    end_consumer_rate=contract_data["end_consumer_rate"],
+                    admin_rate=contract_data["admin_rate"],
+                    taxes_considered=contract_data["taxes_considered"],
+                    is_icms_taxpayer=contract_data["is_icms_taxpayer"],
                 )
                 contract_data["id"] = contract.id
 

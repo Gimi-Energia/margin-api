@@ -56,6 +56,10 @@ class Contract(BaseModel):
         related_name="contracts",
     )
     is_end_consumer = models.BooleanField(default=False)
+    end_consumer_rate = models.FloatField(null=True, blank=True)
+    admin_rate = models.FloatField(null=True, blank=True)
+    taxes_considered = models.TextField(null=True, blank=True)
+    is_icms_taxpayer = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Contract {self.contract_number} - {self.company}"

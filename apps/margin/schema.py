@@ -76,6 +76,7 @@ class ContractFindSchema(Schema):
     icms: ICMSRateContractSchema
     other_taxes: float
     is_end_consumer: bool
+    taxes_considered: str
     items: list[ProductFindSchema]
 
 
@@ -96,6 +97,10 @@ class ContractCalculateSchema(Schema):
     other_taxes: float
     margin: PercentageContractSchema
     is_end_consumer: bool
+    end_consumer_rate: float
+    admin_rate: float
+    taxes_considered: str
+    is_icms_taxpayer: bool
     items: list[ProductCalculateSchema]
 
 
