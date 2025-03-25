@@ -145,10 +145,16 @@ def update_percentage(
     },
 )
 def find_iapp_contract(
-    request, company_id: uuid.UUID, contract: str, is_end_consumer: bool
+    request,
+    company_id: uuid.UUID,
+    contract: str,
+    is_end_consumer: bool,
+    taxes_considered: list[uuid.UUID],
 ):
     decode_jwt_token(request.headers.get("Authorization"))
-    return contract_service.find_iapp_contract(company_id, contract, is_end_consumer)
+    return contract_service.find_iapp_contract(
+        company_id, contract, is_end_consumer, taxes_considered
+    )
 
 
 @contract_router.get(

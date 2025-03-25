@@ -15,6 +15,7 @@ from apps.margin.services.company_service import CompanyService
 from apps.margin.services.email_service import EmailService
 from apps.margin.services.percentage_service import PercentageService
 from apps.taxes.models import Tax
+from apps.taxes.service import TaxesService
 from utils.gimix_service import GIMIxService
 
 
@@ -25,6 +26,7 @@ class ContractService:
         self.company_service = CompanyService()
         self.icms_service = ICMSService()
         self.percentage_service = PercentageService()
+        self.tax_service = TaxesService()
         self.email_service = EmailService()
         self.gimix_service = GIMIxService()
 
@@ -168,7 +170,11 @@ class ContractService:
         }
 
     def find_iapp_contract(
-        self, company_id: uuid.UUID, contract: str, is_end_consumer: bool
+        self,
+        company_id: uuid.UUID,
+        contract: str,
+        is_end_consumer: bool,
+        taxes_considered: list[uuid.UUID],
     ):
         company = self.company_service.get_company(company_id)
 
@@ -183,7 +189,7 @@ class ContractService:
 
         ncm_instance = self._validate_ncm(products)
 
-        other_taxes = self._calculate_other_taxes(company.profit_type)
+        other_taxes = self._calculate_other_taxes(company.profit_type, taxes_considered)
 
         state = self.validate_field(item.get("cliente").get("estado"), "cliente.estado")
         if not (state_instance := self.state_service.get_state_by_code(state)):
@@ -320,12 +326,19 @@ class ContractService:
 
         return ncm_instance
 
-    def _calculate_other_taxes(self, company_type):
-        return (
-            Tax.total_real_profit_rate_with_deduct()
-            if company_type == "real"
-            else Tax.total_presumed_profit_rate_with_deduct()
-        )
+    def _calculate_other_taxes(self, company_type, taxes_considered):
+        if not taxes_considered:
+            raise HttpError(HTTPStatus.BAD_REQUEST, "Impostos considerados ausentes.")
+
+        total = 0
+        for tax_id in taxes_considered:
+            tax = self.tax_service.get_tax(tax_id)
+            if company_type == "presumed" and tax.presumed_profit_deducts_net_cost:
+                total += tax.presumed_profit_rate
+            if company_type == "real" and tax.real_profit_deducts_net_cost:
+                total += tax.real_profit_rate
+
+        return total
 
     def _calculate_net_costs(self, item, other_taxes):
         products = item.get("produtos")
