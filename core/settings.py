@@ -92,7 +92,9 @@ DATABASES = {
     }
 }
 
-DATABASES["default"] = dj_database_url.parse(str(os.getenv("POSTGRES_URL")))
+DATABASES["default"] = dj_database_url.parse(
+    "postgresql://default:K7UPV0WRgqIr@ep-calm-cherry-a415bqln-pooler.us-east-1.aws.neon.tech/verceldb?sslmode=require"
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -144,7 +146,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://margin-app-pi.vercel.app"
+    "https://margin-app-pi.vercel.app",
 ]
 
 # Gmail
