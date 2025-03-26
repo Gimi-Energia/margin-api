@@ -3,7 +3,6 @@ import uuid
 from datetime import datetime
 from http import HTTPStatus
 
-import requests
 from django.db import transaction
 from ninja.errors import HttpError
 
@@ -13,21 +12,22 @@ from apps.icms.services.state_service import StateService
 from apps.margin.models import Contract, ContractItem
 from apps.margin.services.company_service import CompanyService
 from apps.margin.services.email_service import EmailService
+from apps.margin.services.iapp_service import IappService
 from apps.margin.services.percentage_service import PercentageService
-from apps.taxes.models import Tax
 from apps.taxes.service import TaxesService
 from utils.gimix_service import GIMIxService
 
 
 class ContractService:
     def __init__(self):
+        self.icms_service = ICMSService()
         self.ncm_service = NCMService()
         self.state_service = StateService()
         self.company_service = CompanyService()
-        self.icms_service = ICMSService()
+        self.email_service = EmailService()
+        self.iapp_service = IappService()
         self.percentage_service = PercentageService()
         self.tax_service = TaxesService()
-        self.email_service = EmailService()
         self.gimix_service = GIMIxService()
 
     @staticmethod
@@ -78,23 +78,8 @@ class ContractService:
         return response
 
     def _update_contract_data(self, contract_id, payload, token, secret):
-        ENDPOINT = f"https://api.iniciativaaplicativos.com.br/api/comercial/contratos/atualiza/{contract_id}"
-        headers = {"TOKEN": token, "SECRET": secret}
-
-        response = requests.put(ENDPOINT, json=payload, headers=headers, timeout=10)
-
-        if response.ok:
-            iapp_response = response.json()
-
-            if iapp_response.get("success") is False:
-                raise HttpError(HTTPStatus.BAD_REQUEST, iapp_response.get("message"))
-
-            return
-
-        raise HttpError(
-            HTTPStatus.INTERNAL_SERVER_ERROR,
-            f"Erro {response.status_code}: Instabilidade no iApp.",
-        )
+        endpoint = f"/api/comercial/contratos/atualiza/{contract_id}"
+        self.iapp_service.put(endpoint, payload, token, secret)
 
     def calculate_iapp_contract(
         self, contract_id: uuid.UUID, percentage_id: uuid.UUID, admin_rate: float
@@ -303,29 +288,12 @@ class ContractService:
         return token, secret
 
     def _get_contract_data(self, contract, token, secret):
-        ENDPOINT = (
-            "https://api.iniciativaaplicativos.com.br/api/comercial/contratos/lista"
-        )
-        headers = {"TOKEN": token, "SECRET": secret}
-
+        endpoint = "/api/comercial/contratos/lista"
         params = {"offset": 1, "page": 1, "filters": f"identificacao|{contract}"}
-
-        response = requests.get(ENDPOINT, params=params, headers=headers)
-
-        if response.ok:
-            iapp_response = response.json()
-
-            if iapp_response.get("success") is False:
-                raise HttpError(HTTPStatus.BAD_REQUEST, iapp_response.get("message"))
-
-            if items := iapp_response.get("response"):
-                return items
-            raise HttpError(HTTPStatus.NOT_FOUND, "Contrato não encontrado.")
-
-        raise HttpError(
-            HTTPStatus.INTERNAL_SERVER_ERROR,
-            f"Erro {response.status_code}: Instabilidade no iApp.",
-        )
+        response = self.iapp_service.get(endpoint, params, token, secret)
+        if items := response.get("response"):
+            return items
+        raise HttpError(HTTPStatus.NOT_FOUND, "Contrato não encontrado.")
 
     def _validate_ncm(self, products):
         ncm_values = {product.get("produto").get("ncm") for product in products}
