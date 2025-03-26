@@ -90,12 +90,15 @@ class ContractService:
         percentage = self.percentage_service.get_percentage(percentage_id)
         margin = percentage.value
 
-        freight_equation = float(contract.freight_value) / (
-            1
-            - (float(contract.other_taxes) / 100)
-            - (float(admin_rate) / 100)
-            - (float(contract.commission) / 100)
-        )
+        freight_equation = 0
+        freight_value = float(contract.freight_value)
+        if freight_value > 0:
+            freight_equation = freight_value / (
+                1
+                - (float(contract.other_taxes) / 100)
+                - (float(admin_rate) / 100)
+                - (float(contract.commission) / 100)
+            )
 
         margin_equation = float(contract.net_cost_without_taxes) / (
             1
