@@ -199,6 +199,10 @@ class ContractService:
         ):
             raise HttpError(HTTPStatus.NOT_FOUND, "Taxa de ICMS não encontrada")
 
+        client_id = self.validate_field(item.get("cliente").get("id"), "cliente.id")
+        fiscal_data = self._get_client_fiscal_data(client_id, token, secret)
+        is_icms_taxpayer = int(fiscal_data.get("contribuinte")) in [1, 2]
+
         net_cost, net_cost_without_taxes = self._calculate_net_costs(item, other_taxes)
 
         contract_data = {
@@ -210,9 +214,7 @@ class ContractService:
             "client_name": self.validate_field(
                 item.get("cliente").get("nome"), "cliente.nome"
             ),
-            "client_id": self.validate_field(
-                item.get("cliente").get("id"), "cliente.id"
-            ),
+            "client_id": client_id,
             "construction_name": self.validate_field(
                 item.get("projeto").get("nome"), "projeto.nome"
             ),
@@ -249,7 +251,7 @@ class ContractService:
             "end_consumer_rate": None,
             "admin_rate": None,
             "taxes_considered": taxes_str,
-            "is_icms_taxpayer": None,
+            "is_icms_taxpayer": is_icms_taxpayer,
             "items": [
                 {
                     "index": index,
@@ -393,6 +395,11 @@ class ContractService:
             raise HttpError(
                 HTTPStatus.INTERNAL_SERVER_ERROR, f"Erro ao salvar contrato: {e}."
             ) from e
+
+    def _get_client_fiscal_data(self, client_id: str, token: str, secret: str):
+        endpoint = f"/comercial/clientes/busca/{client_id}"
+        response = self.iapp_service.get(endpoint, {}, token, secret)
+        return response.get("fiscal", {})
 
     def raise_error(self, field):
         raise HttpError(

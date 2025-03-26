@@ -1,5 +1,6 @@
-import requests
 from http import HTTPStatus
+
+import requests
 from ninja.errors import HttpError
 
 
