@@ -99,9 +99,14 @@ class ContractService:
                 - (float(contract.commission) / 100)
             )
 
+        icms_rate = (
+            float(contract.icms.total_rate)
+            if not contract.is_icms_taxpayer
+            else float(contract.icms.internal_rate)
+        )
         margin_equation = float(contract.net_cost_without_taxes) / (
             1
-            - (float(contract.icms.total_rate) / 100)
+            - (icms_rate / 100)
             - (float(contract.other_taxes) / 100)
             - (float(margin) / 100)
             - (float(contract.commission) / 100)
