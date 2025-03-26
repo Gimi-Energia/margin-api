@@ -76,6 +76,7 @@ class ContractFindSchema(Schema):
     icms: ICMSRateContractSchema
     other_taxes: float
     is_end_consumer: bool
+    end_consumer_rate: float
     is_icms_taxpayer: bool
     taxes_considered: str
     items: list[ProductFindSchema]

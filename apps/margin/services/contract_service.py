@@ -89,15 +89,6 @@ class ContractService:
 
         percentage = self.percentage_service.get_percentage(percentage_id)
         margin = percentage.value
-        end_consumer_rate = (
-            contract.ncm.percentage_end_consumer if contract.is_end_consumer else 0
-        )
-
-        if contract.is_end_consumer and end_consumer_rate == 0:
-            raise HttpError(
-                HTTPStatus.BAD_REQUEST,
-                "NCM não possui percentual para consumidor final.",
-            )
 
         freight_equation = float(contract.freight_value) / (
             1
@@ -112,7 +103,11 @@ class ContractService:
             - (float(contract.other_taxes) / 100)
             - (float(margin) / 100)
             - (float(contract.commission) / 100)
-            - (float(end_consumer_rate) / 100 if end_consumer_rate > 0 else 0)
+            - (
+                float(contract.end_consumer_rate) / 100
+                if contract.end_consumer_rate > 0
+                else 0
+            )
         )
 
         sale_price = margin_equation + freight_equation
@@ -203,6 +198,16 @@ class ContractService:
         fiscal_data = self._get_client_fiscal_data(client_id, token, secret)
         is_icms_taxpayer = int(fiscal_data.get("contribuinte")) in [1, 2]
 
+        end_consumer_rate = (
+            ncm_instance.percentage_end_consumer if is_end_consumer else 0
+        )
+
+        if is_end_consumer and end_consumer_rate == 0:
+            raise HttpError(
+                HTTPStatus.BAD_REQUEST,
+                "NCM não possui percentual para consumidor final.",
+            )
+
         net_cost, net_cost_without_taxes = self._calculate_net_costs(item, other_taxes)
 
         contract_data = {
@@ -248,7 +253,7 @@ class ContractService:
             "xped": item.get("xped") or "N/A",
             "margin": None,
             "is_end_consumer": is_end_consumer,
-            "end_consumer_rate": None,
+            "end_consumer_rate": end_consumer_rate,
             "admin_rate": None,
             "taxes_considered": taxes_str,
             "is_icms_taxpayer": is_icms_taxpayer,
