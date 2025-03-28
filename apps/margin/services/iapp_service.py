@@ -13,10 +13,10 @@ class IappService:
         response = requests.get(url, params=params, headers=headers, timeout=10)
 
         if response.ok:
-            if response.get("success") is False:
-                raise HttpError(HTTPStatus.BAD_REQUEST, response.get("message"))
-
-            return response.json()
+            response_data = response.json()
+            if response_data.get("success") is False:
+                raise HttpError(HTTPStatus.BAD_REQUEST, response_data.get("message"))
+            return response_data
 
         raise HttpError(
             HTTPStatus.INTERNAL_SERVER_ERROR,
@@ -29,7 +29,10 @@ class IappService:
         response = requests.put(url, json=payload, headers=headers, timeout=10)
 
         if response.ok:
-            return response.json()
+            response_data = response.json()
+            if response_data.get("success") is False:
+                raise HttpError(HTTPStatus.BAD_REQUEST, response_data.get("message"))
+            return response_data
 
         raise HttpError(
             HTTPStatus.INTERNAL_SERVER_ERROR,
