@@ -124,7 +124,6 @@ class ContractService:
         with transaction.atomic():
             contract.net_cost_with_margin = sale_price
             contract.margin = percentage
-            contract.end_consumer_rate = end_consumer_rate
             contract.admin_rate = admin_rate
             contract.save()
 
