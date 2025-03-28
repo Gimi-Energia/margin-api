@@ -110,7 +110,11 @@ class NCMService:
         ncm_group = self.get_ncm_group(payload.group)
 
         try:
-            return NCM.objects.create(code=payload.code, group=ncm_group)
+            return NCM.objects.create(
+                code=payload.code,
+                group=ncm_group,
+                percentage_end_consumer=payload.percentage_end_consumer,
+            )
         except IntegrityError as exc:
             raise HttpError(
                 HTTPStatus.BAD_REQUEST, "NCM com o código especificado já existe"
