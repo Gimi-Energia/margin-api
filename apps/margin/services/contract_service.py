@@ -171,7 +171,7 @@ class ContractService:
         company_id: uuid.UUID,
         contract: str,
         is_end_consumer: bool,
-        taxes_considered: list[uuid.UUID],
+        taxes_considered: str,
     ):
         company = self.company_service.get_company(company_id)
 
@@ -187,7 +187,7 @@ class ContractService:
         ncm_instance = self._validate_ncm(products)
 
         other_taxes, taxes_str = self._calculate_other_taxes(
-            company.profit_type, taxes_considered
+            company.profit_type, taxes_considered.split(",")
         )
 
         state = self.validate_field(item.get("cliente").get("estado"), "cliente.estado")

@@ -149,7 +149,7 @@ def find_iapp_contract(
     company_id: uuid.UUID,
     contract: str,
     is_end_consumer: bool,
-    taxes_considered: list[uuid.UUID],
+    taxes_considered: str,
 ):
     decode_jwt_token(request.headers.get("Authorization"))
     return contract_service.find_iapp_contract(
