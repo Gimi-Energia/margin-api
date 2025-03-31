@@ -110,4 +110,4 @@ class StateContractSchema(Schema):
 
 class NCMContractSchema(Schema):
     code: str
-    end_consumer_percentage: float
+    percentage_end_consumer: float
