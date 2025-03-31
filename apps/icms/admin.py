@@ -24,7 +24,7 @@ class NCMGroupAdmin(admin.ModelAdmin):
 
 @admin.register(NCM)
 class NCMAdmin(admin.ModelAdmin):
-    list_display = ("code", "group")
+    list_display = ("code", "group", "percentage_end_consumer")
     search_fields = ("code", "group__name")
     ordering = ("code",)
     list_filter = ("group",)
