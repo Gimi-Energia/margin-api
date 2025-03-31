@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "apps.icms",
     "apps.taxes",
     "apps.margin",
+    "apps.notification",
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "apps.notification.middleware.ErrorNotificationMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -157,3 +159,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = str(os.getenv("EMAIL_HOST_USER"))
 EMAIL_HOST_PASSWORD = str(os.getenv("EMAIL_HOST_PASSWORD"))
+
+# Chat
+
+# GOOGLE_CHAT_WEBHOOK_URL = str(os.getenv("GOOGLE_CHAT_WEBHOOK_URL"))
+GOOGLE_CHAT_WEBHOOK_URL = "https://chat.googleapis.com/v1/spaces/AAAA7zRTlG8/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=FREyCcFJ7KoTKlloG1kNsHSlxwU67VO3k1bTNxFyh10"
