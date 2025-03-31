@@ -408,8 +408,11 @@ class ContractService:
             ) from e
 
     def _get_client_fiscal_data(self, client_id: str, token: str, secret: str):
-        endpoint = f"/comercial/clientes/busca/{client_id}"
-        response = self.iapp_service.get(endpoint, {}, token, secret)
+        endpoint = f"/api/comercial/clientes/busca/{client_id}"
+        params = {"offset": 1, "page": 1}
+        response = self.iapp_service.get(endpoint, params, token, secret)
+        response = response.get("response")
+        
         return response.get("fiscal", {})
 
     def raise_error(self, field):

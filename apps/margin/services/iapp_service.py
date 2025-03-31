@@ -19,7 +19,7 @@ class IappService:
             return response_data
 
         raise HttpError(
-            HTTPStatus.INTERNAL_SERVER_ERROR,
+            HTTPStatus.FAILED_DEPENDENCY,
             f"Erro {response.status_code}: Instabilidade no iApp.",
         )
 
@@ -35,6 +35,6 @@ class IappService:
             return response_data
 
         raise HttpError(
-            HTTPStatus.INTERNAL_SERVER_ERROR,
+            HTTPStatus.FAILED_DEPENDENCY,
             f"Erro {response.status_code}: Instabilidade no iApp.",
         )
