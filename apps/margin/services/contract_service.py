@@ -163,6 +163,11 @@ class ContractService:
             "items": items_data,
             "net_cost_with_margin": contract.net_cost_with_margin,
             "margin": contract.margin,
+            "is_end_consumer": contract.is_end_consumer,
+            "end_consumer_rate": contract.end_consumer_rate,
+            "admin_rate": contract.admin_rate,
+            "taxes_considered": contract.taxes_considered,
+            "is_icms_taxpayer": contract.is_icms_taxpayer,
         }
 
     def find_iapp_contract(
@@ -412,7 +417,7 @@ class ContractService:
         params = {"offset": 1, "page": 1}
         response = self.iapp_service.get(endpoint, params, token, secret)
         response = response.get("response")
-        
+
         return response.get("fiscal", {})
 
     def raise_error(self, field):
