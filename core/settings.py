@@ -144,7 +144,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://margin-app-pi.vercel.app"
+    "https://margin-app-pi.vercel.app",
+    "https://margin-app-git-feat-rev01-desenvolvimento-gimi.vercel.app",
 ]
 
 # Gmail
