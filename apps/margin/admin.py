@@ -28,6 +28,7 @@ class ContractItemInline(admin.TabularInline):
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "contract_number",
         "company",
         "client_name",
