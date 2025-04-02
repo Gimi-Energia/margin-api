@@ -91,7 +91,7 @@ class ContractService:
         margin = percentage.value
 
         freight_equation = 0
-        if freight_value := float(contract.freight_value) > 0:
+        if (freight_value := float(contract.freight_value)) > 0:
             freight_equation = freight_value / (
                 1
                 - (float(contract.other_taxes) / 100)
